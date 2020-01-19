@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1155</width>
-    <height>593</height>
+    <height>602</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -205,56 +205,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QGraphicsView" name="GraphicsViewBottomCenter">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>340</y>
-      <width>301</width>
-      <height>241</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QGraphicsView" name="GraphicsViewBottomLeft">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>340</y>
-      <width>291</width>
-      <height>241</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QGraphicsView" name="GraphicsViewBottomRight">
-    <property name="geometry">
-     <rect>
-      <x>840</x>
-      <y>340</y>
-      <width>301</width>
-      <height>241</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QGraphicsView" name="GraphicsViewUpLeft">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>50</y>
-      <width>451</width>
-      <height>281</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QGraphicsView" name="GraphicsViewUpRight">
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>50</y>
-      <width>451</width>
-      <height>281</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="RefreshPortButton">
     <property name="geometry">
      <rect>
@@ -337,27 +287,66 @@
      <string>TextLabel</string>
     </property>
    </widget>
-   <zorder>GraphicsViewUpRight</zorder>
-   <zorder>GraphicsViewUpLeft</zorder>
-   <zorder>StartButton</zorder>
-   <zorder>StopButton</zorder>
-   <zorder>PortDropDownList</zorder>
-   <zorder>SetPointBox</zorder>
-   <zorder>KpBox</zorder>
-   <zorder>KiBox</zorder>
-   <zorder>KdBox</zorder>
-   <zorder>PIDParametersBox</zorder>
-   <zorder>GraphicsViewBottomCenter</zorder>
-   <zorder>GraphicsViewBottomLeft</zorder>
-   <zorder>GraphicsViewBottomRight</zorder>
-   <zorder>RefreshPortButton</zorder>
-   <zorder>GraphicViewUpLeftLabel</zorder>
-   <zorder>GraphicViewBottomLeftLabel</zorder>
-   <zorder>GraphicViewBottomCenterLabel</zorder>
-   <zorder>GraphicViewUpRightLabel</zorder>
-   <zorder>GraphicViewBottomRightLabel</zorder>
+   <widget class="PlotWidget" name="PlotWidgetUpLeft" native="true">
+    <property name="geometry">
+     <rect>
+      <x>229</x>
+      <y>49</y>
+      <width>451</width>
+      <height>281</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="PlotWidget" name="PlotWidgetUpRight" native="true">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>50</y>
+      <width>451</width>
+      <height>281</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="PlotWidget" name="PlotWidgetBottomLeft" native="true">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>340</y>
+      <width>291</width>
+      <height>241</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="PlotWidget" name="PlotWidgetBottomCenter" native="true">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>340</y>
+      <width>301</width>
+      <height>241</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="PlotWidget" name="PlotWidgetBottomRight" native="true">
+    <property name="geometry">
+     <rect>
+      <x>840</x>
+      <y>340</y>
+      <width>301</width>
+      <height>241</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QWidget</extends>
+   <header>pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

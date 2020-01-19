@@ -29,7 +29,7 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.Kp = 0
         self.Ki = 0
         self.Kd = 0
-
+        
     def StartButtonClick(self):
         print("start button clicked")
     
