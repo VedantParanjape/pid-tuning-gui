@@ -268,7 +268,73 @@
      <string>R</string>
     </property>
     <property name="icon">
-     <iconset theme="refresh"/>
+     <iconset theme="refresh">
+      <normaloff>.</normaloff>.</iconset>
+    </property>
+   </widget>
+   <widget class="QLabel" name="GraphicViewUpLeftLabel">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>310</y>
+      <width>79</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="GraphicViewBottomLeftLabel">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>560</y>
+      <width>79</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="GraphicViewBottomCenterLabel">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>560</y>
+      <width>79</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="GraphicViewUpRightLabel">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>310</y>
+      <width>79</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="GraphicViewBottomRightLabel">
+    <property name="geometry">
+     <rect>
+      <x>850</x>
+      <y>560</y>
+      <width>79</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
     </property>
    </widget>
    <zorder>GraphicsViewUpRight</zorder>
@@ -285,6 +351,11 @@
    <zorder>GraphicsViewBottomLeft</zorder>
    <zorder>GraphicsViewBottomRight</zorder>
    <zorder>RefreshPortButton</zorder>
+   <zorder>GraphicViewUpLeftLabel</zorder>
+   <zorder>GraphicViewBottomLeftLabel</zorder>
+   <zorder>GraphicViewBottomCenterLabel</zorder>
+   <zorder>GraphicViewUpRightLabel</zorder>
+   <zorder>GraphicViewBottomRightLabel</zorder>
   </widget>
  </widget>
  <resources/>
