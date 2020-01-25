@@ -31,6 +31,16 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.KpSpinBox.valueChanged.connect(self.KpChanged)
         self.KiSpinBox.valueChanged.connect(self.KiChanged)
         self.KdSpinBox.valueChanged.connect(self.KdChanged)
+        self.SerialPortOptionButton.setChecked(True)
+        self.UDPPortOptionButton.setChecked(False)
+        self.PortDropDownList.setVisible(True)
+        self.RefreshPortButton.setVisible(True)
+        self.ServerAddressTextBox.setVisible(False)
+        self.ConnectUDPPortButton.setVisible(False)
+        self.SerialPortOptionButton.toggled.connect(self.SerialPortOptionButtonToggled)
+        self.UDPPortOptionButton.toggled.connect(self.UDPPortOptionButtonToggled)
+        self.ConnectUDPPortButton.clicked.connect(self.ConnectUDPPortButtonClicked)
+        self.ServerAddressTextBox.textChanged.connect(self.ServerAddressChanged)
         self.SetPoint = 0
         self.Kp = 0
         self.Ki = 0
@@ -38,7 +48,10 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.timer = pg.QtCore.QTimer(self)
         self.prev_i = 0
         self.dict_config = {}
+        self.SerialPortMode = True
+        self.UDPPortMode = False
         self.SerialPort = 'dev/ttyUSB0'
+        self.UDPAddress = '127.0.0.1:990'
 
     def write_config(self):
         self.dict_config.update({'SetPoint' : self.SetPoint})
@@ -86,7 +99,7 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
     def PortDropDownListOption(self, text):
         self.SerialPort = text
         print("option selected: {}".format(text))
-
+    
     def SetPointSendButtonClick(self):
         self.write_config()
         print("set point: {}".format(self.SetPoint))
@@ -118,6 +131,31 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
     def KdChanged(self):
         self.Kd = self.KdSpinBox.value()
 
+    def SerialPortOptionButtonToggled(self):
+        self.SerialPortMode = True
+        self.UDPPortMode = False
+        self.UDPPortOptionButton.setChecked(False)
+
+        self.PortDropDownList.setVisible(True)
+        self.RefreshPortButton.setVisible(True)
+        self.ServerAddressTextBox.setVisible(False)
+        self.ConnectUDPPortButton.setVisible(False)
+    
+    def UDPPortOptionButtonToggled(self):
+        self.SerialPortMode = False
+        self.UDPPortMode = True
+        self.SerialPortOptionButton.setChecked(False)
+
+        self.PortDropDownList.setVisible(False)
+        self.RefreshPortButton.setVisible(False)
+        self.ServerAddressTextBox.setVisible(True)
+        self.ConnectUDPPortButton.setVisible(True)
+
+    def ServerAddressChanged(self, text):
+        self.UDPAddress = text
+
+    def ConnectUDPPortButtonClicked(self):
+        print("connect clicked ip addr: {}".format(self.UDPAddress))
 # https://www.youtube.com/watch?v=Y-8N1dPFsVE to dynamically resize
 
 def main():
