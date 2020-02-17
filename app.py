@@ -37,7 +37,7 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.RefreshPortButton.setVisible(True)
         self.ServerAddressTextBox.setVisible(False)
         self.ConnectUDPPortButton.setVisible(False)
-        self.SerialPortOptionButton.toggled.connect(self.SerialPortOptionButtonToggled)
+        self.SerialPortOptioselfnButton.toggled.connect(self.SerialPortOptionButtonToggled)
         self.UDPPortOptionButton.toggled.connect(self.UDPPortOptionButtonToggled)
         self.ConnectUDPPortButton.clicked.connect(self.ConnectUDPPortButtonClicked)
         self.ServerAddressTextBox.textChanged.connect(self.ServerAddressChanged)
