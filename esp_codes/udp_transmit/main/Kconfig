@@ -1,0 +1,15 @@
+menu "IP address and port configuration"
+
+    config IP_ADDRESS
+        string "IP ADDRESS"
+        default "192.168.0.126"
+        help 
+            "IP Address of the host computer"
+    
+    config PORT
+        int "PORT"
+        default "1212"
+        help
+            "Port of the host computer"
+
+endmenu

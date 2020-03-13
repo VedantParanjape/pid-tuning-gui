@@ -37,7 +37,7 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.RefreshPortButton.setVisible(True)
         self.ServerAddressTextBox.setVisible(False)
         self.ConnectUDPPortButton.setVisible(False)
-        self.SerialPortOptioselfnButton.toggled.connect(self.SerialPortOptionButtonToggled)
+        self.SerialPortOptionButton.toggled.connect(self.SerialPortOptionButtonToggled)
         self.UDPPortOptionButton.toggled.connect(self.UDPPortOptionButtonToggled)
         self.ConnectUDPPortButton.clicked.connect(self.ConnectUDPPortButtonClicked)
         self.ServerAddressTextBox.textChanged.connect(self.ServerAddressChanged)
@@ -64,18 +64,19 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         json.dump(self.dict_config, fwrite)
 
     def update_plot(self):
-        X = [float(i/0.01) for i in range(self.prev_i, self.prev_i+2000)]
-        self.prev_i = self.prev_i + 2000
-        Y = [math.sin(X[i]) for i in range(2000)]
-        Y1 = [math.cos(X[i]) for i in range(2000)]
-        CenterPoint = self.prev_i - 1000
+        X = [float(i/0.01) for i in range(self.prev_i, self.prev_i+200)]
+        self.prev_i = self.prev_i + 200
+        Y = [math.sin(X[i]) for i in range(200)]
+        Y1 = [math.cos(X[i]) for i in range(200)]
+        CenterPoint = self.prev_i - 100
         self.PlotWidgetUpLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetUpRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetBottomLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetBottomCenter.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetBottomRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         
-        time.sleep(0.01)
+        time.sleep(0.05)
+        
         self.PlotWidgetUpLeft.plot(X,Y, clear=True)
         self.PlotWidgetUpRight.plot(X,Y1, clear=True)
         self.PlotWidgetBottomLeft.plot(X,Y, clear=True)
