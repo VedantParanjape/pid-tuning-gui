@@ -1,3 +1,6 @@
+#ifndef UDP_HANDLER_H
+#define UDP_HANDLER_H
+
 #include <string.h>
 #include <sys/param.h>
 #include "freertos/FreeRTOS.h"
@@ -33,3 +36,5 @@ void network_manager(struct network_data* nm);
 int send_data(struct network_data* nm, char* payload);
 char* recieve_data(struct network_data* nm);
 void close_network_manager(struct network_data* nm);
+
+#endif

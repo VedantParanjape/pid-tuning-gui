@@ -41,7 +41,7 @@ while True:
     try:
         i = i + 1
         print(i)
-        data, addr = sock.recvfrom(6)
+        data, addr = sock.recvfrom(150)
         if not data:
             break
         data = data.decode()

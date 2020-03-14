@@ -4,7 +4,7 @@ static const char *TAG = "udp_handler";
 
 void network_manager(struct network_data* nm)
 {
-        nm->dest_addr.sin_addr.s_addr = inet_addr(HOST_IP_ADDR);
+    nm->dest_addr.sin_addr.s_addr = inet_addr(HOST_IP_ADDR);
     nm->dest_addr.sin_family = AF_INET;
     nm->dest_addr.sin_port = htons(PORT);
     nm->addr_family = AF_INET;

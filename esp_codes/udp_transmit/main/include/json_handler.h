@@ -21,6 +21,9 @@ Json with Kp,ki,kd and setpoint data to be recieved
 
 */
 
+#ifndef JSON_HANDLER_H
+#define JSON_HANDLER_H
+
 #include "cJSON.h"
 #include "stdio.h"
 
@@ -34,3 +37,5 @@ struct pid_const
 
 char *create_pid_data_to_json(float current, float error, float P, float I, float D);
 struct pid_const read_pid_data_from_json(const char* data);
+
+#endif

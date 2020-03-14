@@ -2,7 +2,7 @@
 set(COMPONENT_REQUIRES )
 set(COMPONENT_PRIV_REQUIRES )
 
-set(COMPONENT_SRCS main.c json_handler.c udp_handler.c)
+set(COMPONENT_SRCS main.c json_handler.c udp_handler.c transport.c)
 set(COMPONENT_ADD_INCLUDEDIRS "include")
 
 register_component()

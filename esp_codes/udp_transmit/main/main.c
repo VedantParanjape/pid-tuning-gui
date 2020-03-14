@@ -13,6 +13,7 @@
 #include "nvs_flash.h"
 #include "esp_netif.h"
 #include "protocol_examples_common.h"
+#include "transport.h"
 
 // void app_main(void)
 // {
@@ -28,35 +29,20 @@
 //     }
 // }
 
+
+
 void app_main(void)
 {
-    ESP_ERROR_CHECK(nvs_flash_init());
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-
-    ESP_ERROR_CHECK(example_connect());
-
-    struct network_data* handle = malloc(sizeof(struct network_data));
-    network_manager(handle);
-
-    int rec = 1;
-    while(1)
-    {
-        rec = send_data(handle, "vedant");
-        printf("send data: %d\n", rec);
-        vTaskDelay(10);
-    }
-
-    char *recS = recieve_data(handle);
-    
-    printf("data is: %s\n", recS);
-    close_network_manager(handle);
-    
-    printf("init\n");
-    while (1)
-    {
-        printf("it worked\n");
-        vTaskDelay(100);
-    }
-    
+    struct pid_terms dt;
+    dt.current = 1.00;
+    dt.error = 2.00;
+    dt.P = 3.00;
+    dt.I = 4.00;
+    dt.D = 5.00;
+    ESP_ERROR_CHECK(init_queue());
+    logD("1", "%s", "1");
+    ESP_ERROR_CHECK(send_to_queue(dt));
+    ESP_ERROR_CHECK(send_to_queue(dt));
+    logD("2", "%s", "2");
+    pid_transport();
 }
