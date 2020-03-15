@@ -55,4 +55,7 @@ void close_network_manager(struct network_data* nm)
     ESP_LOGE(TAG, "Shutting down socket");
     shutdown(nm->sock, 0);
     close(nm->sock);
+    free(nm->rx_buffer);
+    free(nm->addr_str);
+    free(nm);
 }

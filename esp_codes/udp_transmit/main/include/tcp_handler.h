@@ -1,5 +1,5 @@
-#ifndef UDP_HANDLER_H
-#define UDP_HANDLER_H
+#ifndef TCP_HANDLER_H
+#define TCP_HANDLER_H
 
 #include <string.h>
 #include <sys/param.h>
@@ -19,10 +19,11 @@
 #include "lwip/sys.h"
 #include <lwip/netdb.h>
 
-#define HOST_IP_ADDR CONFIG_UDP_IP_ADDRESS
-#define PORT CONFIG_UDP_PORT
 
-struct network_data
+#define TCP_HOST_IP_ADDR CONFIG_TCP_IP_ADDRESS
+#define TCP_PORT CONFIG_TCP_PORT
+
+struct tcp_network_data
 {
     char rx_buffer[128];
     char addr_str[128];
@@ -32,9 +33,9 @@ struct network_data
     int sock;
 };
 
-void network_manager(struct network_data* nm);
-int send_data(struct network_data* nm, char* payload);
-char* recieve_data(struct network_data* nm);
-void close_network_manager(struct network_data* nm);
+void tcp_network_manager(struct tcp_network_data* nm);
+int tcp_send_data(struct tcp_network_data* nm, char* payload);
+char* tcp_recieve_data(struct tcp_network_data* nm);
+void tcp_close_network_manager(struct tcp_network_data* nm);
 
 #endif

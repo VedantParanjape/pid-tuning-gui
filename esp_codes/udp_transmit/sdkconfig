@@ -948,9 +948,17 @@ CONFIG_WPA_MBEDTLS_CRYPTO=y
 #
 # IP address and port configuration
 #
-CONFIG_IP_ADDRESS="192.168.43.2"
-CONFIG_PORT=1212
+CONFIG_UDP_IP_ADDRESS="192.168.43.2"
+CONFIG_UDP_PORT=1212
+CONFIG_TCP_IP_ADDRESS="192.168.43.2"
+CONFIG_TCP_PORT=2121
 # end of IP address and port configuration
+
+#
+# Message queue size configuration
+#
+CONFIG_MESSAGE_QUEUE_SIZE=1000
+# end of Message queue size configuration
 # end of Component config
 
 #

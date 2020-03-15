@@ -8,12 +8,20 @@
 
 import socket
 import sys
+import time
 import json
+
 # -----------  Config  ----------
 IP_VERSION = 'IPv4'
-PORT = 1212
+PORT = 2121
 # -------------------------------
 
+pid_data = {
+    "kp":12.0,
+    "ki":13.0,
+    "kd":14.0,
+    "setpoint":15.0
+}
 
 if IP_VERSION == 'IPv4':
     family_addr = socket.AF_INET
@@ -25,30 +33,30 @@ else:
 
 
 try:
-    sock = socket.socket(family_addr, socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock = socket.socket(family_addr, socket.SOCK_STREAM)
 except socket.error as msg:
-    print('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
-    sys.exit()
+    print('Error: ' + str(msg[0]) + ': ' + msg[1])
+    sys.exit(1)
+
+print('Socket created')
 
 try:
     sock.bind(('', PORT))
+    print('Socket binded')
+    sock.listen(1)
+    print('Socket listening')
+    conn, addr = sock.accept()
+    print('Connected by', addr)
 except socket.error as msg:
-    print('Bind failed. Error: ' + str(msg[0]) + ': ' + msg[1])
-    sys.exit()
+    print('Error: ' + str(msg[0]) + ': ' + msg[1])
+    sock.close()
+    sys.exit(1)
 
-i = 0
-while True:
-    try:
-        i = i + 1
-        print(i)
-        data, addr = sock.recvfrom(150)
-       
-        if not data:
-            break
-        data = data.decode()
-        print('Reply[' + addr[0] + ':' + str(addr[1]) + '] - ' + data)
-    except socket.error as msg:
-        print('Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+for i in range(5):
+    reply = json.dumps(pid_data)
+    conn.sendall(reply.encode())
+    reply = conn.recv(15)
+    print(reply)
 
-sock.close()
+    time.sleep(2)
+conn.close()

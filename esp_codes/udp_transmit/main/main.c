@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "json_handler.h"
-#include "udp_handler.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -13,7 +11,7 @@
 #include "nvs_flash.h"
 #include "esp_netif.h"
 #include "protocol_examples_common.h"
-#include "transport.h"
+#include "pid_plotter.h"
 
 // void app_main(void)
 // {
@@ -30,8 +28,7 @@
 // }
 
 
-
-void app_main(void)
+void broad()
 {
     struct pid_terms dt;
     dt.current = 1.00;
@@ -39,10 +36,18 @@ void app_main(void)
     dt.P = 3.00;
     dt.I = 4.00;
     dt.D = 5.00;
+    while(1)
+    {
+        esp_err_t err = send_to_queue(dt);
+        err = send_to_queue(dt);
+        vTaskDelay(10);
+    }
+}
+
+void app_main(void)
+{
     ESP_ERROR_CHECK(init_queue());
-    logD("1", "%s", "1");
-    ESP_ERROR_CHECK(send_to_queue(dt));
-    ESP_ERROR_CHECK(send_to_queue(dt));
-    logD("2", "%s", "2");
-    pid_transport();
+    init_transport();
+    xTaskCreate(broad, "send", 4096, NULL, 1, NULL);
+    plotter();
 }
