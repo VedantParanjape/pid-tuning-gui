@@ -10,7 +10,6 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_netif.h"
-#include "protocol_examples_common.h"
 #include "pid_plotter.h"
 
 // void app_main(void)
@@ -36,18 +35,19 @@ void broad()
     dt.P = 3.00;
     dt.I = 4.00;
     dt.D = 5.00;
+    
     while(1)
     {
         esp_err_t err = send_to_queue(dt);
         err = send_to_queue(dt);
+        logD("main", "%f", pid_const_read().setpoint);
         vTaskDelay(10);
     }
 }
 
 void app_main(void)
 {
-    ESP_ERROR_CHECK(init_queue());
-    init_transport();
+
     xTaskCreate(broad, "send", 4096, NULL, 1, NULL);
     plotter();
 }
