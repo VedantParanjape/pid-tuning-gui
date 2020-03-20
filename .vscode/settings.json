@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "json_handler.h": "c",
-        "udp_handler.h": "c",
-        "transport.h": "c",
-        "protocol_examples_common.h": "c",
-        "tcp_handler.h": "c"
-    }
-}
