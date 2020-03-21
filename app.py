@@ -64,18 +64,18 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         json.dump(self.dict_config, fwrite)
 
     def update_plot(self):
-        X = [float(i/0.01) for i in range(self.prev_i, self.prev_i+200)]
-        self.prev_i = self.prev_i + 200
-        Y = [math.sin(X[i]) for i in range(200)]
-        Y1 = [math.cos(X[i]) for i in range(200)]
-        CenterPoint = self.prev_i - 100
+        X = [float(i/0.01) for i in range(self.prev_i, self.prev_i+100)]
+        self.prev_i = self.prev_i + 100
+        Y = [math.sin(X[i]) for i in range(100)]
+        Y1 = [math.cos(X[i]) for i in range(100)]
+        CenterPoint = self.prev_i - 50
         self.PlotWidgetUpLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetUpRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetBottomLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetBottomCenter.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetBottomRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         
-        time.sleep(0.05)
+        time.sleep(0.01)
         
         self.PlotWidgetUpLeft.plot(X,Y, clear=True)
         self.PlotWidgetUpRight.plot(X,Y1, clear=True)
