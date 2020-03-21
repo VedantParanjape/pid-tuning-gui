@@ -8,6 +8,7 @@ import time
 import math
 import pyqtgraph as pg
 import json
+from server.tcp import tcp_server
 
 def SerialPorts():
     PortList = serial.tools.list_ports.comports()
@@ -16,7 +17,7 @@ def SerialPorts():
 
 
 class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, tcp_handle=None):
         super(PIDApp, self).__init__(parent)
         self.setupUi(self)
         self.StartButton.clicked.connect(self.StartButtonClick)
@@ -52,16 +53,19 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.UDPPortMode = False
         self.SerialPort = 'dev/ttyUSB0'
         self.UDPAddress = '127.0.0.1:990'
+        self.tcp_handle = tcp_handle
 
     def write_config(self):
-        self.dict_config.update({'SetPoint' : self.SetPoint})
         self.dict_config.update({'Kp' : self.Kp})
         self.dict_config.update({'Ki' : self.Ki})
         self.dict_config.update({'Kd' : self.Kd})
+        self.dict_config.update({'SetPoint' : self.SetPoint})
         
         print(self.dict_config)
         fwrite = open('config.json', "w")
         json.dump(self.dict_config, fwrite)
+
+        self.tcp_handle.message_pipe.put(json.dumps(self.dict_config))
 
     def update_plot(self):
         X = [float(i/0.01) for i in range(self.prev_i, self.prev_i+100)]
@@ -77,11 +81,12 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         
         time.sleep(0.01)
         
-        self.PlotWidgetUpLeft.plot(X,Y, clear=True)
-        self.PlotWidgetUpRight.plot(X,Y1, clear=True)
-        self.PlotWidgetBottomLeft.plot(X,Y, clear=True)
-        self.PlotWidgetBottomCenter.plot(X,Y1, clear=True)
-        self.PlotWidgetBottomRight.plot(X,Y, clear=True)
+        for i in range(100):
+            self.PlotWidgetUpLeft.setData(X[i],Y[i])
+            self.PlotWidgetUpRight.setData(X[i],Y1[i])
+            self.PlotWidgetBottomLeft.setData(X[i],Y[i])
+            self.PlotWidgetBottomCenter.setData(X[i],Y1[i])
+            self.PlotWidgetBottomRight.setData(X[i],Y[i])
 
 
     def StartButtonClick(self):
@@ -161,7 +166,10 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    form = PIDApp()
+    tcp_handle = tcp_server(2121)
+    tcp_handle.run(True)
+    tcp_handle.send_data
+    form = PIDApp(tcp_handle=tcp_handle)
     form.show()
     app.exec_()
 
