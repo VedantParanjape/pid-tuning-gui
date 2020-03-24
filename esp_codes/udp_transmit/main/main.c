@@ -41,7 +41,7 @@ void broad()
         esp_err_t err = send_to_queue(dt);
         err = send_to_queue(dt);
         logD("main", "%f", pid_const_read().setpoint);
-        vTaskDelay(10);
+        vTaskDelay(1);
     }
 }
 
