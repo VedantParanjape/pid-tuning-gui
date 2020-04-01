@@ -8,7 +8,7 @@ import time
 import math
 import pyqtgraph as pg
 import json
-# from server.tcp import tcp_server
+from server.tcp import tcp_server
 from server.udp import udp_server
 
 def SerialPorts():
@@ -18,7 +18,7 @@ def SerialPorts():
 
 
 class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
-    def __init__(self, parent=None, tcp_handle=None):
+    def __init__(self, parent=None, tcp_handle=None, udp_handle=None):
         super(PIDApp, self).__init__(parent)
         self.setupUi(self)
         self.StartButton.clicked.connect(self.StartButtonClick)
@@ -49,14 +49,16 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.Kd = 0
         self.timer = pg.QtCore.QTimer(self)
         self.dict_config = {}
+        self.PID_dict = {}
         self.SerialPortMode = True
         self.UDPPortMode = False
         self.SerialPort = 'dev/ttyUSB0'
         self.UDPAddress = '127.0.0.1:990'
         self.tcp_handle = tcp_handle
+        self.udp_handle = udp_handle
 
         self.prev_i = 0
-        self.X = [float(i/0.01) for i in range(0, 2000)]
+        self.X = [float(i/0.02) for i in range(0, 2000)]
         self.Y = [math.sin(self.X[i]) for i in range(2000)]
         self.Y1 = [math.cos(self.X[i]) for i in range(2000)]
 
@@ -76,7 +78,10 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         fwrite = open('config.json', "w")
         json.dump(self.dict_config, fwrite)
 
+        # self.tcp_handle.send_data(json.dumps(self.dict_config))
         self.tcp_handle.message_pipe.put(json.dumps(self.dict_config))
+        self.PID_dict = self.udp_handle.recv_data(150)
+        print(self.PID_dict)
 
     def update_plot(self):
         self.prev_i = self.prev_i + 1
@@ -88,13 +93,13 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.PlotWidgetBottomRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         
         self.X = self.X[1:]
-        self.X.append(self.X[-1] + 100)
+        self.X.append(self.X[-1] + 0.01)
         self.Y = self.Y[1:]
         self.Y.append(math.sin(self.X[-1]))
         self.Y1 = self.Y1[1:]
         self.Y1.append(math.cos(self.X[-1]))
 
-        time.sleep(0.02)
+        time.sleep(0.05)
 
         self.UpLeft.setData(self.X, self.Y)
         self.UpRight.setData(self.X, self.Y1)
@@ -180,10 +185,16 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    udp_handle = udp_server(2121)
+    
+    tcp_handle = tcp_server(2121)
+    tcp_handle.run(True)
+    tcp_handle.send_data
+
+    udp_handle = udp_server(1212)
     udp_handle.run(True)
     udp_handle.send_data
-    form = PIDApp(tcp_handle=udp_handle)
+
+    form = PIDApp(tcp_handle=tcp_handle, udp_handle=udp_handle)
     form.show()
     app.exec_()
 
