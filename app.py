@@ -8,7 +8,8 @@ import time
 import math
 import pyqtgraph as pg
 import json
-from server.tcp import tcp_server
+# from server.tcp import tcp_server
+from server.udp import udp_server
 
 def SerialPorts():
     PortList = serial.tools.list_ports.comports()
@@ -47,13 +48,23 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.Ki = 0
         self.Kd = 0
         self.timer = pg.QtCore.QTimer(self)
-        self.prev_i = 0
         self.dict_config = {}
         self.SerialPortMode = True
         self.UDPPortMode = False
         self.SerialPort = 'dev/ttyUSB0'
         self.UDPAddress = '127.0.0.1:990'
         self.tcp_handle = tcp_handle
+
+        self.prev_i = 0
+        self.X = [float(i/0.01) for i in range(0, 2000)]
+        self.Y = [math.sin(self.X[i]) for i in range(2000)]
+        self.Y1 = [math.cos(self.X[i]) for i in range(2000)]
+
+        self.UpLeft = self.PlotWidgetUpLeft.plot(self.X, self.Y)
+        self.UpRight = self.PlotWidgetUpRight.plot(self.X, self.Y1)
+        self.BottomLeft = self.PlotWidgetBottomLeft.plot(self.X, self.Y)
+        self.BottomCenter = self.PlotWidgetBottomCenter.plot(self.X, self.Y1)
+        self.BottomRight = self.PlotWidgetBottomRight.plot(self.X, self.Y)
 
     def write_config(self):
         self.dict_config.update({'Kp' : self.Kp})
@@ -68,24 +79,28 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.tcp_handle.message_pipe.put(json.dumps(self.dict_config))
 
     def update_plot(self):
-        X = [float(i/0.01) for i in range(self.prev_i, self.prev_i+2000)]
-        self.prev_i = self.prev_i + 2000
-        Y = [math.sin(X[i]) for i in range(2000)]
-        Y1 = [math.cos(X[i]) for i in range(2000)]
-        CenterPoint = self.prev_i - 1000
+        self.prev_i = self.prev_i + 1
+        CenterPoint = self.prev_i - 0.5
         self.PlotWidgetUpLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetUpRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetBottomLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetBottomCenter.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         self.PlotWidgetBottomRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
         
-        time.sleep(0.01)
-        
-        self.PlotWidgetUpLeft.plot(X, Y, clear=True)
-        self.PlotWidgetUpRight.plot(X, Y1, clear=True)
-        self.PlotWidgetBottomLeft.plot(X, Y, clear=True)
-        self.PlotWidgetBottomCenter.plot(X, Y1, clear=True)
-        self.PlotWidgetBottomRight.plot(X, Y, clear=True)
+        self.X = self.X[1:]
+        self.X.append(self.X[-1] + 100)
+        self.Y = self.Y[1:]
+        self.Y.append(math.sin(self.X[-1]))
+        self.Y1 = self.Y1[1:]
+        self.Y1.append(math.cos(self.X[-1]))
+
+        time.sleep(0.02)
+
+        self.UpLeft.setData(self.X, self.Y)
+        self.UpRight.setData(self.X, self.Y1)
+        self.BottomLeft.setData(self.X, self.Y)
+        self.BottomCenter.setData(self.X, self.Y1)
+        self.BottomRight.setData(self.X, self.Y)
 
 
     def StartButtonClick(self):
@@ -165,10 +180,10 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    tcp_handle = tcp_server(2121)
-    tcp_handle.run(True)
-    tcp_handle.send_data
-    form = PIDApp(tcp_handle=tcp_handle)
+    udp_handle = udp_server(2121)
+    udp_handle.run(True)
+    udp_handle.send_data
+    form = PIDApp(tcp_handle=udp_handle)
     form.show()
     app.exec_()
 
