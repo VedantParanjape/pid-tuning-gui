@@ -56,6 +56,10 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.UDPAddress = '127.0.0.1:990'
         self.tcp_handle = tcp_handle
         self.udp_handle = udp_handle
+        self.udp_handle.run(True)
+        # print("i am here")
+        # self.PID_dict = self.udp_handle.recv_data(150)
+        # print(self.PID_dict)
 
         self.prev_i = 0
         self.X = [float(i/0.02) for i in range(0, 2000)]
@@ -80,10 +84,12 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
 
         # self.tcp_handle.send_data(json.dumps(self.dict_config))
         self.tcp_handle.message_pipe.put(json.dumps(self.dict_config))
+
+    def update_plot(self):
+        print("update_plot")
         self.PID_dict = self.udp_handle.recv_data(150)
         print(self.PID_dict)
 
-    def update_plot(self):
         self.prev_i = self.prev_i + 1
         CenterPoint = self.prev_i - 0.5
         self.PlotWidgetUpLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
@@ -110,6 +116,7 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
 
     def StartButtonClick(self):
         print("start button clicked")
+        self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_plot)
         self.timer.start(0)
 
@@ -188,11 +195,11 @@ def main():
     
     tcp_handle = tcp_server(2121)
     tcp_handle.run(True)
-    tcp_handle.send_data
+    # tcp_handle.send_data
 
     udp_handle = udp_server(1212)
-    udp_handle.run(True)
-    udp_handle.send_data
+    # udp_handle.run(True)
+    # udp_handle.send_data
 
     form = PIDApp(tcp_handle=tcp_handle, udp_handle=udp_handle)
     form.show()

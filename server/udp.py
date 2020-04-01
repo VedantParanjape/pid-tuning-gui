@@ -32,10 +32,11 @@ class udp_server():
             "addr" : None,
             "error" : None
         }
+        print("HERE")
 
         try: 
             data, addr = self.sock.recvfrom(int(size))
-            
+            print("Data: ", data)
             if not data:
                 return_dict["addr"] = addr
             else:
@@ -45,11 +46,12 @@ class udp_server():
         except socket.error as msg:
             return_dict["error"] = msg
 
+        print("Return Dict: ", return_dict)
         return return_dict
     
     def send_data(self, data, addr):
         try:
-            self.sock.sendall(data, addr)
+            self.sock.sendto(data, addr)
         
         except socket.error as msg:
             return msg

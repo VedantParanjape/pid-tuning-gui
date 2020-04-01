@@ -15,7 +15,7 @@ from server.udp import udp_server
 import random
 
 # -----------  Config  ----------
-IP_VERSION = 'IPv4'
+# IP_VERSION = 'IPv4'
 TCP_PORT = 2121
 UDP_PORT = 1212
 # -------------------------------
@@ -37,17 +37,17 @@ terms = {
     "Error":0.0
 }
 
-if IP_VERSION == 'IPv4':
-	family_addr = socket.AF_INET
-elif IP_VERSION == 'IPv6':
-	family_addr = socket.AF_INET6
-else:
-	print('IP_VERSION must be IPv4 or IPv6')
-	sys.exit(1)
+# if IP_VERSION == 'IPv4':
+# 	family_addr = socket.AF_INET
+# elif IP_VERSION == 'IPv6':
+# 	family_addr = socket.AF_INET6
+# else:
+# 	print('IP_VERSION must be IPv4 or IPv6')
+# 	sys.exit(1)
 
 # -------------- UDP -------------
 try:
-    udp_server_sock = socket.socket(family_addr, socket.SOCK_DGRAM)
+    udp_server_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 except socket.error as msg:
     print('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
@@ -93,35 +93,38 @@ def main():
     error = 0
     
     while(True):
-        
-        try:
-            tcp_data = tcp_sock.recv(buffer_size)
-            print(tcp_data)
-            if tcp_data:
-                # Send to appropriate function
-                tcp_data = json.loads(tcp_data)
-                pid_data['Kp'] = tcp_data['Kp']
-                pid_data['Ki'] = tcp_data['Ki']
-                pid_data['Kd'] = tcp_data['Kd']
-
-                # Send P, I, D terms back to GUI
-                error += random.randint(0, 30)
-                terms['P'] = pid_data['Kp'] * error
-                terms['I'] = pid_data['Ki'] * error * 0.01
-                terms['D'] = pid_data['Kd'] * error * 0.1
-                terms['Current'] = error
-                terms['Error'] = 0.05 * error
-
-                # udp_server_sock.sendall(json.dumps(terms).encode(), UDP_PORT)
-
-        except socket.error as msg:
-            print("TCP Receive Error: " + str(msg[0]) + ': ' + msg[1])
-
+        print("I am 1")
         try:
             udp_server_sock.sendto(json.dumps(terms).encode(), ('', UDP_PORT))
+            print("sent")
         except socket.error as msg:
             print('Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
-        
+
+        print("I am 2")
+        # try:
+        #     tcp_data = tcp_sock.recv(buffer_size)
+        #     print(tcp_data)
+        #     if tcp_data:
+        #         # Send to appropriate function
+        #         tcp_data = json.loads(tcp_data)
+        #         pid_data['Kp'] = tcp_data['Kp']
+        #         pid_data['Ki'] = tcp_data['Ki']
+        #         pid_data['Kd'] = tcp_data['Kd']
+
+        #         # Send P, I, D terms back to GUI
+        #         error += random.randint(0, 30)
+        #         terms['P'] = pid_data['Kp'] * error
+        #         terms['I'] = pid_data['Ki'] * error * 0.01
+        #         terms['D'] = pid_data['Kd'] * error * 0.1
+        #         terms['Current'] = error
+        #         terms['Error'] = 0.05 * error
+
+        #         # udp_server_sock.sendall(json.dumps(terms).encode(), UDP_PORT)
+
+        # except socket.error as msg:
+        #     print("TCP Receive Error: " + str(msg[0]) + ': ' + msg[1])
+
+        print("I am 3")
     udp_server_sock.close()
     tcp_sock.close()
 
