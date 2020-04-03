@@ -11,6 +11,8 @@ import json
 from server.tcp import tcp_server
 from server.udp import udp_server
 
+
+
 def SerialPorts():
     PortList = serial.tools.list_ports.comports()
 
@@ -18,7 +20,7 @@ def SerialPorts():
 
 
 class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
-    def __init__(self, parent=None, tcp_handle=None, udp_handle=None):
+    def __init__(self, parent=None, tcp_handle=None, udp_handle=None, tcp_client_sock=None):
         super(PIDApp, self).__init__(parent)
         self.setupUi(self)
         self.StartButton.clicked.connect(self.StartButtonClick)
@@ -48,15 +50,17 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.Ki = 0
         self.Kd = 0
         self.timer = pg.QtCore.QTimer(self)
-        self.dict_config = {}
-        self.PID_dict = {}
+        self.dict_sent = {}
+        self.dict_recv = {}
         self.SerialPortMode = True
         self.UDPPortMode = False
         self.SerialPort = 'dev/ttyUSB0'
         self.UDPAddress = '127.0.0.1:990'
         self.tcp_handle = tcp_handle
         self.udp_handle = udp_handle
-        self.udp_handle.run(True)
+        self.tcp_client_sock = tcp_client_sock
+        # self.udp_handle.run(True)
+        
         # print("i am here")
         # self.PID_dict = self.udp_handle.recv_data(150)
         # print(self.PID_dict)
@@ -73,23 +77,30 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.BottomRight = self.PlotWidgetBottomRight.plot(self.X, self.Y)
 
     def write_config(self):
-        self.dict_config.update({'Kp' : self.Kp})
-        self.dict_config.update({'Ki' : self.Ki})
-        self.dict_config.update({'Kd' : self.Kd})
-        self.dict_config.update({'SetPoint' : self.SetPoint})
+        self.dict_sent.update({'Kp' : self.Kp})
+        self.dict_sent.update({'Ki' : self.Ki})
+        self.dict_sent.update({'Kd' : self.Kd})
+        self.dict_sent.update({'SetPoint' : self.SetPoint})
         
-        print(self.dict_config)
-        fwrite = open('config.json', "w")
-        json.dump(self.dict_config, fwrite)
+        print(self.dict_sent)
+        fwrite = open('sent.json', "w")
+        json.dump(self.dict_sent, fwrite)
 
-        # self.tcp_handle.send_data(json.dumps(self.dict_config))
-        self.tcp_handle.message_pipe.put(json.dumps(self.dict_config))
+        if self.tcp_handle.conn:
+            err = self.tcp_handle.send_data(json.dumps(self.dict_sent))
+            if not err:
+                print('Error in tcp sending: ' + str(msg[0]) + ': ' + msg[1])
+            else: 
+                print("TCP sent!!!")
+        # self.tcp_client_sock.send(json.dumps(self.dict_config))
+        self.tcp_handle.message_pipe.put(json.dumps(self.dict_sent))
+
+    def read_pid(self):
+        print(self.udp_handle.print_message_pipe())
 
     def update_plot(self):
         print("update_plot")
-        self.PID_dict = self.udp_handle.recv_data(150)
-        print(self.PID_dict)
-
+        self.read_pid()
         self.prev_i = self.prev_i + 1
         CenterPoint = self.prev_i - 0.5
         self.PlotWidgetUpLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
@@ -195,13 +206,16 @@ def main():
     
     tcp_handle = tcp_server(2121)
     tcp_handle.run(True)
+    # tcp_handle.send_data("hello")
     # tcp_handle.send_data
+    # tcp_client_sock = socket.socket()
+    # tcp_client_sock.connect(('', 2121))
 
     udp_handle = udp_server(1212)
-    # udp_handle.run(True)
+    udp_handle.run(True)
     # udp_handle.send_data
 
-    form = PIDApp(tcp_handle=tcp_handle, udp_handle=udp_handle)
+    form = PIDApp(tcp_client_sock=None, udp_handle=udp_handle, tcp_handle=tcp_handle)
     form.show()
     app.exec_()
 

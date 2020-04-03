@@ -5,7 +5,7 @@ from multiprocessing import Process
 from multiprocessing import Queue
 
 class tcp_server():
-    def __init__(self, port=1212):
+    def __init__(self, port=2121):
         self.message_pipe = Queue()
         self.proc = None
 
@@ -16,6 +16,7 @@ class tcp_server():
         
         try: 
             self.sock = socket.socket(self.family_addr, socket.SOCK_STREAM)
+            self.sock.settimeout(0)
         
         except socket.error as msg:
             print(f'failed to create socket. error code: {str(msg[0])} Message {msg[1]}')
@@ -45,6 +46,15 @@ class tcp_server():
             return msg
         
         return None
+
+    def print_message_pipe(self): 
+        """ 
+        function to print queue elements 
+        """
+        print("Queue elements:") 
+        while not self.message_pipe.empty(): 
+            print(self.message_pipe.get()) 
+        print("Queue is now empty!")
 
     def shutdown(self):
         self.sock.close()
