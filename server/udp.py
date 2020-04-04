@@ -35,7 +35,6 @@ class udp_server():
 
         try: 
             data, addr = self.sock.recvfrom(int(size))
-            
             if not data:
                 return_dict["addr"] = addr
             else:
@@ -55,6 +54,13 @@ class udp_server():
             return msg
         
         return None
+
+    def print_message_pipe(self): 
+        """ 
+        function to print queue elements 
+        """
+        while not self.message_pipe.empty(): 
+            print(self.message_pipe.get())    
 
     def shutdown(self):
         self.sock.close()
