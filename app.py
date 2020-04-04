@@ -9,6 +9,8 @@ import math
 import pyqtgraph as pg
 import json
 from server.tcp import tcp_server
+from server.udp import udp_server
+from server.tcp import tcp_client
 
 def SerialPorts():
     PortList = serial.tools.list_ports.comports()
@@ -17,7 +19,7 @@ def SerialPorts():
 
 
 class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
-    def __init__(self, parent=None, tcp_handle=None):
+    def __init__(self, parent=None, tcp_handle=None, udp_handle=None):
         super(PIDApp, self).__init__(parent)
         self.setupUi(self)
         self.StartButton.clicked.connect(self.StartButtonClick)
@@ -47,49 +49,82 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.Ki = 0
         self.Kd = 0
         self.timer = pg.QtCore.QTimer(self)
-        self.prev_i = 0
-        self.dict_config = {}
+        self.dict_sent = {}
         self.SerialPortMode = True
         self.UDPPortMode = False
         self.SerialPort = 'dev/ttyUSB0'
         self.UDPAddress = '127.0.0.1:990'
         self.tcp_handle = tcp_handle
+        self.udp_handle = udp_handle
+
+        # Initialize
+        self.xAxis = list(range(100))
+        self.pTerm = [0] * 100
+        self.iTerm = [0] * 100
+        self.dTerm = [0] * 100
+        self.currentTerm = [0] * 100
+        self.errorTerm = [0] * 100
+
+        # See if this can be put in layout.py
+        penUpLeft = pg.mkPen(color=(255, 255, 255), width=2)
+        penUpRight = pg.mkPen(color=(255, 255, 255), width=2)
+        penBottomLeft = pg.mkPen(color=(255, 0, 0), width=2)
+        penBottomCentre = pg.mkPen(color=(0, 255, 0), width=2)
+        penBottomRight = pg.mkPen(color=(0, 0, 255), width=2)
+
+        # Initial Plot
+        self.UpLeft = self.PlotWidgetUpLeft.plot(self.xAxis, self.currentTerm, pen=penUpLeft)
+        self.UpRight = self.PlotWidgetUpRight.plot(self.xAxis, self.errorTerm, pen=penUpRight)
+        self.BottomLeft = self.PlotWidgetBottomLeft.plot(self.xAxis, self.pTerm, pen=penBottomLeft)
+        self.BottomCenter = self.PlotWidgetBottomCenter.plot(self.xAxis, self.iTerm, pen=penBottomCentre)
+        self.BottomRight = self.PlotWidgetBottomRight.plot(self.xAxis, self.dTerm, pen=penBottomRight)
 
     def write_config(self):
-        self.dict_config.update({'Kp' : self.Kp})
-        self.dict_config.update({'Ki' : self.Ki})
-        self.dict_config.update({'Kd' : self.Kd})
-        self.dict_config.update({'SetPoint' : self.SetPoint})
+        self.dict_sent.update({'Kp' : self.Kp})
+        self.dict_sent.update({'Ki' : self.Ki})
+        self.dict_sent.update({'Kd' : self.Kd})
+        self.dict_sent.update({'SetPoint' : self.SetPoint})
         
-        print(self.dict_config)
-        fwrite = open('config.json', "w")
-        json.dump(self.dict_config, fwrite)
+        print(self.dict_sent)
+        fwrite = open('sent.json', "w")
+        json.dump(self.dict_sent, fwrite)
+        self.tcp_handle.message_pipe.put(json.dumps(self.dict_sent))
 
-        self.tcp_handle.message_pipe.put(json.dumps(self.dict_config))
+    def read_pid(self):
+        print(self.udp_handle.print_message_pipe())
 
     def update_plot(self):
-        X = [float(i/0.01) for i in range(self.prev_i, self.prev_i+2000)]
-        self.prev_i = self.prev_i + 2000
-        Y = [math.sin(X[i]) for i in range(2000)]
-        Y1 = [math.cos(X[i]) for i in range(2000)]
-        CenterPoint = self.prev_i - 1000
-        self.PlotWidgetUpLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        self.PlotWidgetUpRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        self.PlotWidgetBottomLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        self.PlotWidgetBottomCenter.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        self.PlotWidgetBottomRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        
-        time.sleep(0.01)
-        
-        self.PlotWidgetUpLeft.plot(X, Y, clear=True)
-        self.PlotWidgetUpRight.plot(X, Y1, clear=True)
-        self.PlotWidgetBottomLeft.plot(X, Y, clear=True)
-        self.PlotWidgetBottomCenter.plot(X, Y1, clear=True)
-        self.PlotWidgetBottomRight.plot(X, Y, clear=True)
+        # self.read_pid()
+        data = self.udp_handle.message_pipe.get()
 
+        # Removing the first entry
+        self.xAxis = self.xAxis[1:]
+        self.pTerm = self.pTerm[1:]
+        self.iTerm = self.iTerm[1:]
+        self.dTerm = self.dTerm[1:]
+        self.currentTerm = self.currentTerm[1:]
+        self.errorTerm = self.errorTerm[1:]
+
+        # Updating the Values
+        self.xAxis.append(self.xAxis[-1] + 1)
+        self.pTerm.append(data['P'])
+        self.iTerm.append(data['I'])
+        self.dTerm.append(data['D'])
+        self.currentTerm.append(data['Current'])
+        self.errorTerm.append(data['Error'])
+
+        # time.sleep(0.05)
+
+        # Updating the Plot
+        self.UpLeft.setData(self.xAxis, self.currentTerm)
+        self.UpRight.setData(self.xAxis, self.errorTerm)
+        self.BottomLeft.setData(self.xAxis, self.pTerm)
+        self.BottomCenter.setData(self.xAxis, self.iTerm)
+        self.BottomRight.setData(self.xAxis, self.dTerm)
 
     def StartButtonClick(self):
         print("start button clicked")
+        self.timer.setInterval(50)
         self.timer.timeout.connect(self.update_plot)
         self.timer.start(0)
 
@@ -165,9 +200,12 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    tcp_handle = tcp_server(2121)
-    tcp_handle.run(True)
-    form = PIDApp(tcp_handle=tcp_handle)
+
+    tcp_handle = tcp_client(2121)
+
+    udp_handle = udp_server(1212)
+    udp_handle.run(True)
+    form = PIDApp(udp_handle=udp_handle, tcp_handle=tcp_handle)
     form.show()
     app.exec_()
 
