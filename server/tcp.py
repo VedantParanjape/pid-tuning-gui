@@ -5,7 +5,7 @@ from multiprocessing import Process
 from multiprocessing import Queue
 
 class tcp_server():
-    def __init__(self, port=2121):
+    def __init__(self, port=1212):
         self.message_pipe = Queue()
         self.proc = None
 
