@@ -48,7 +48,7 @@ class udp_server():
     
     def send_data(self, data, addr):
         try:
-            self.sock.sendto(data, addr)
+            self.sock.sendall(data, addr)
         
         except socket.error as msg:
             return msg
