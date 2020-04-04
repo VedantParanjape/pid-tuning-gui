@@ -17,7 +17,6 @@ class tcp_server():
         try: 
             self.sock = socket.socket(self.family_addr, socket.SOCK_STREAM)
             # For overcoming Address already in use error
-            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         
         except socket.error as msg:
             print(f'failed to create socket. error code: {str(msg[0])} Message {msg[1]}')
@@ -48,12 +47,12 @@ class tcp_server():
         
         return None
 
-    def print_message_pipe(self): 
-        """ 
-        function to print queue elements 
-        """ 
-        while not self.message_pipe.empty(): 
-            print(self.message_pipe.get()) 
+#     def print_message_pipe(self): 
+#         """ 
+#         function to print queue elements 
+#         """ 
+#         while not self.message_pipe.empty(): 
+#             print(self.message_pipe.get()) 
 
     def shutdown(self):
         self.sock.close()
