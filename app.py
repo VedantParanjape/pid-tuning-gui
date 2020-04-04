@@ -167,7 +167,6 @@ def main():
     app = QApplication(sys.argv)
     tcp_handle = tcp_server(2121)
     tcp_handle.run(True)
-    tcp_handle.send_data
     form = PIDApp(tcp_handle=tcp_handle)
     form.show()
     app.exec_()
