@@ -16,7 +16,6 @@ class tcp_server():
         
         try: 
             self.sock = socket.socket(self.family_addr, socket.SOCK_STREAM)
-            # For overcoming Address already in use error
         
         except socket.error as msg:
             print(f'failed to create socket. error code: {str(msg[0])} Message {msg[1]}')
