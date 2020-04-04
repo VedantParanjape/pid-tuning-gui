@@ -18,7 +18,6 @@ class tcp_server():
             self.sock = socket.socket(self.family_addr, socket.SOCK_STREAM)
             # For overcoming Address already in use error
             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            # self.sock.settimeout(0)
         
         except socket.error as msg:
             print(f'failed to create socket. error code: {str(msg[0])} Message {msg[1]}')

@@ -32,11 +32,9 @@ class udp_server():
             "addr" : None,
             "error" : None
         }
-        # print("in recv_data UDP")
 
         try: 
             data, addr = self.sock.recvfrom(int(size))
-            # print("Data: ", data)
             if not data:
                 return_dict["addr"] = addr
             else:
@@ -46,7 +44,6 @@ class udp_server():
         except socket.error as msg:
             return_dict["error"] = msg
 
-        # print("Return Dict: ", return_dict)
         return return_dict
     
     def send_data(self, data, addr):
@@ -62,11 +59,8 @@ class udp_server():
         """ 
         function to print queue elements 
         """
-        print("Queue elements:") 
         while not self.message_pipe.empty(): 
-            print(self.message_pipe.get()) 
-        print("Queue is now empty!") 
-   
+            print(self.message_pipe.get())    
 
     def shutdown(self):
         self.sock.close()

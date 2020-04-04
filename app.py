@@ -50,7 +50,6 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.Kd = 0
         self.timer = pg.QtCore.QTimer(self)
         self.dict_sent = {}
-        self.dict_recv = {}
         self.SerialPortMode = True
         self.UDPPortMode = False
         self.SerialPort = 'dev/ttyUSB0'
@@ -66,6 +65,7 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.currentTerm = [0] * 100
         self.errorTerm = [0] * 100
 
+        # See if this can be put in layout.py
         penUpLeft = pg.mkPen(color=(255, 255, 255), width=2)
         penUpRight = pg.mkPen(color=(255, 255, 255), width=2)
         penBottomLeft = pg.mkPen(color=(255, 0, 0), width=2)
@@ -94,9 +94,7 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         print(self.udp_handle.print_message_pipe())
 
     def update_plot(self):
-        # print("update_plot")
         # self.read_pid()
-
         data = self.udp_handle.message_pipe.get()
 
         # Removing the first entry
