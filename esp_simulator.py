@@ -16,7 +16,7 @@ import random
 
 # -----------  Config  ----------
 family_addr = socket.AF_INET
-TCP_PORT = 5000
+TCP_PORT = 2121
 UDP_PORT = 1212
 # -------------------------------
 
@@ -48,38 +48,22 @@ def main():
     udp_handle = udp_server(UDP_PORT)
     # udp_handle.run(True)
 
-    error = 0
-
     while True:
         err = udp_handle.send_data(json.dumps(terms).encode(), ('', UDP_PORT))
         if err:
             print("Error in UDP sending: " + str(err))
-        # else:
-        #     print("Sent")
+        else:
+            print("Sent")
+        
+        terms['P'] = random.random()
+        terms['I'] = random.random()
+        terms['D'] = random.random()
+        terms['Current'] = random.random()
+        terms['Error'] = random.random()
 
         # print(tcp_handle.print_message_pipe())
         # print("*******************")
-        # try:
-        #     tcp_data = tcp_handle.recv_data(buffer_size)
-
-        #     print(tcp_data)
-        #     if tcp_data:
-        #         # Send to appropriate function
-        #         tcp_data = json.loads(tcp_data)
-        #         pid_data['Kp'] = tcp_data['Kp']
-        #         pid_data['Ki'] = tcp_data['Ki']
-        #         pid_data['Kd'] = tcp_data['Kd']
-
-        #         # Send P, I, D terms back to GUI
-        #         error += random.randint(0, 30)
-        #         terms['P'] = pid_data['Kp'] * error
-        #         terms['I'] = pid_data['Ki'] * error * 0.01
-        #         terms['D'] = pid_data['Kd'] * error * 0.1
-        #         terms['Current'] = error
-        #         terms['Error'] = 0.05 * error
-
-        # except socket.error as msg:
-        #     print("TCP Receive Error: " + str(msg[0]) + ': ' + msg[1])
+        
 
     tcp_handle.shutdown()
     udp_handle.shutdown()

@@ -10,8 +10,7 @@ import pyqtgraph as pg
 import json
 from server.tcp import tcp_server
 from server.udp import udp_server
-
-
+from server.tcp import tcp_client
 
 def SerialPorts():
     PortList = serial.tools.list_ports.comports()
@@ -20,7 +19,7 @@ def SerialPorts():
 
 
 class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
-    def __init__(self, parent=None, tcp_handle=None, udp_handle=None, tcp_client_sock=None):
+    def __init__(self, parent=None, tcp_handle=None, udp_handle=None):
         super(PIDApp, self).__init__(parent)
         self.setupUi(self)
         self.StartButton.clicked.connect(self.StartButtonClick)
@@ -58,23 +57,27 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.UDPAddress = '127.0.0.1:990'
         self.tcp_handle = tcp_handle
         self.udp_handle = udp_handle
-        self.tcp_client_sock = tcp_client_sock
-        # self.udp_handle.run(True)
-        
-        # print("i am here")
-        # self.PID_dict = self.udp_handle.recv_data(150)
-        # print(self.PID_dict)
 
-        self.prev_i = 0
-        self.X = [float(i/0.02) for i in range(0, 2000)]
-        self.Y = [math.sin(self.X[i]) for i in range(2000)]
-        self.Y1 = [math.cos(self.X[i]) for i in range(2000)]
+        # Initialize
+        self.xAxis = list(range(100))
+        self.pTerm = [0] * 100
+        self.iTerm = [0] * 100
+        self.dTerm = [0] * 100
+        self.currentTerm = [0] * 100
+        self.errorTerm = [0] * 100
 
-        self.UpLeft = self.PlotWidgetUpLeft.plot(self.X, self.Y)
-        self.UpRight = self.PlotWidgetUpRight.plot(self.X, self.Y1)
-        self.BottomLeft = self.PlotWidgetBottomLeft.plot(self.X, self.Y)
-        self.BottomCenter = self.PlotWidgetBottomCenter.plot(self.X, self.Y1)
-        self.BottomRight = self.PlotWidgetBottomRight.plot(self.X, self.Y)
+        penUpLeft = pg.mkPen(color=(255, 255, 255), width=2)
+        penUpRight = pg.mkPen(color=(255, 255, 255), width=2)
+        penBottomLeft = pg.mkPen(color=(255, 0, 0), width=2)
+        penBottomCentre = pg.mkPen(color=(0, 255, 0), width=2)
+        penBottomRight = pg.mkPen(color=(0, 0, 255), width=2)
+
+        # Initial Plot
+        self.UpLeft = self.PlotWidgetUpLeft.plot(self.xAxis, self.currentTerm, pen=penUpLeft)
+        self.UpRight = self.PlotWidgetUpRight.plot(self.xAxis, self.errorTerm, pen=penUpRight)
+        self.BottomLeft = self.PlotWidgetBottomLeft.plot(self.xAxis, self.pTerm, pen=penBottomLeft)
+        self.BottomCenter = self.PlotWidgetBottomCenter.plot(self.xAxis, self.iTerm, pen=penBottomCentre)
+        self.BottomRight = self.PlotWidgetBottomRight.plot(self.xAxis, self.dTerm, pen=penBottomRight)
 
     def write_config(self):
         self.dict_sent.update({'Kp' : self.Kp})
@@ -85,45 +88,41 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         print(self.dict_sent)
         fwrite = open('sent.json', "w")
         json.dump(self.dict_sent, fwrite)
-
-        if self.tcp_handle.conn:
-            err = self.tcp_handle.send_data(json.dumps(self.dict_sent))
-            if not err:
-                print('Error in tcp sending: ' + str(msg[0]) + ': ' + msg[1])
-            else: 
-                print("TCP sent!!!")
-        # self.tcp_client_sock.send(json.dumps(self.dict_config))
         self.tcp_handle.message_pipe.put(json.dumps(self.dict_sent))
 
     def read_pid(self):
         print(self.udp_handle.print_message_pipe())
 
     def update_plot(self):
-        print("update_plot")
-        self.read_pid()
-        self.prev_i = self.prev_i + 1
-        CenterPoint = self.prev_i - 0.5
-        self.PlotWidgetUpLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        self.PlotWidgetUpRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        self.PlotWidgetBottomLeft.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        self.PlotWidgetBottomCenter.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        self.PlotWidgetBottomRight.setXRange(float(CenterPoint-5)/0.01, float(CenterPoint+5)/0.01)
-        
-        self.X = self.X[1:]
-        self.X.append(self.X[-1] + 0.01)
-        self.Y = self.Y[1:]
-        self.Y.append(math.sin(self.X[-1]))
-        self.Y1 = self.Y1[1:]
-        self.Y1.append(math.cos(self.X[-1]))
+        # print("update_plot")
+        # self.read_pid()
 
-        time.sleep(0.05)
+        data = self.udp_handle.message_pipe.get()
 
-        self.UpLeft.setData(self.X, self.Y)
-        self.UpRight.setData(self.X, self.Y1)
-        self.BottomLeft.setData(self.X, self.Y)
-        self.BottomCenter.setData(self.X, self.Y1)
-        self.BottomRight.setData(self.X, self.Y)
+        # Removing the first entry
+        self.xAxis = self.xAxis[1:]
+        self.pTerm = self.pTerm[1:]
+        self.iTerm = self.iTerm[1:]
+        self.dTerm = self.dTerm[1:]
+        self.currentTerm = self.currentTerm[1:]
+        self.errorTerm = self.errorTerm[1:]
 
+        # Updating the Values
+        self.xAxis.append(self.xAxis[-1] + 1)
+        self.pTerm.append(data['P'])
+        self.iTerm.append(data['I'])
+        self.dTerm.append(data['D'])
+        self.currentTerm.append(data['Current'])
+        self.errorTerm.append(data['Error'])
+
+        # time.sleep(0.05)
+
+        # Updating the Plot
+        self.UpLeft.setData(self.xAxis, self.currentTerm)
+        self.UpRight.setData(self.xAxis, self.errorTerm)
+        self.BottomLeft.setData(self.xAxis, self.pTerm)
+        self.BottomCenter.setData(self.xAxis, self.iTerm)
+        self.BottomRight.setData(self.xAxis, self.dTerm)
 
     def StartButtonClick(self):
         print("start button clicked")
@@ -204,18 +203,18 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
 def main():
     app = QApplication(sys.argv)
     
-    tcp_handle = tcp_server(2121)
-    tcp_handle.run(True)
-    # tcp_handle.send_data("hello")
+    # tcp_handle = tcp_server(2121)
+    # tcp_handle.run(True)
     # tcp_handle.send_data
-    # tcp_client_sock = socket.socket()
-    # tcp_client_sock.connect(('', 2121))
+
+    # Change this if this is server
+    tcp_handle = tcp_client(2121)
 
     udp_handle = udp_server(1212)
     udp_handle.run(True)
     # udp_handle.send_data
 
-    form = PIDApp(tcp_client_sock=None, udp_handle=udp_handle, tcp_handle=tcp_handle)
+    form = PIDApp(udp_handle=udp_handle, tcp_handle=tcp_handle)
     form.show()
     app.exec_()
 
