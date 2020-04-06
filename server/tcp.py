@@ -14,8 +14,11 @@ class tcp_server():
         self.conn = None
         self.addr = None
         
+        self.control_var = True
+
         try: 
             self.sock = socket.socket(self.family_addr, socket.SOCK_STREAM)
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         
         except socket.error as msg:
             print(f'failed to create socket. error code: {str(msg[0])} Message {msg[1]}')
@@ -54,9 +57,10 @@ class tcp_server():
 #             print(self.message_pipe.get()) 
 
     def shutdown(self):
+        print("tcp socket server shutdown")
         self.sock.close()
 
-    def handler(self, control_var=True):
+    def handler(self):
         try:
             self.sock.bind(('', self.port))
             print('socket binded')
@@ -70,7 +74,7 @@ class tcp_server():
             self.sock.close()
             sys.exit(1)
         
-        while control_var:
+        while self.control_var:
             data = self.message_pipe.get()
             data_len = len(data)
             recv_len = -10
@@ -83,11 +87,12 @@ class tcp_server():
                     recv_len = int(recv_dict["data"].decode())
 
             print('message sent successfully')
-
+        
+        self.shutdown()
         self.proc.join()
 
-    def run(self, control_var):
-        self.proc = Process(target=self.handler, kwargs={'control_var':control_var})
+    def run(self):
+        self.proc = Process(target=self.handler)
         self.proc.start()
 
 

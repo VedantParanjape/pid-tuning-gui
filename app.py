@@ -1,8 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication
 import sys
-from UI import layout
-import serial.tools.list_ports
+from ui import layout
 import pyqtgraph
 import time
 import math
@@ -12,20 +11,12 @@ from server.tcp import tcp_server
 from server.udp import udp_server
 from server.tcp import tcp_client
 
-def SerialPorts():
-    PortList = serial.tools.list_ports.comports()
-
-    return [i.device for i in PortList]
-
-
 class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
     def __init__(self, parent=None, tcp_handle=None, udp_handle=None):
         super(PIDApp, self).__init__(parent)
         self.setupUi(self)
         self.StartButton.clicked.connect(self.StartButtonClick)
         self.StopButton.clicked.connect(self.StopButtonClick)
-        self.RefreshPortButton.clicked.connect(self.RefreshPortList)
-        self.PortDropDownList.activated[str].connect(self.PortDropDownListOption)
         self.SetPointSendButton.clicked.connect(self.SetPointSendButtonClick)
         self.KpSendButton.clicked.connect(self.KpSendButtonClick)
         self.KiSendButton.clicked.connect(self.KiSendButtonClick)
@@ -34,28 +25,16 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.KpSpinBox.valueChanged.connect(self.KpChanged)
         self.KiSpinBox.valueChanged.connect(self.KiChanged)
         self.KdSpinBox.valueChanged.connect(self.KdChanged)
-        self.SerialPortOptionButton.setChecked(True)
-        self.UDPPortOptionButton.setChecked(False)
-        self.PortDropDownList.setVisible(True)
-        self.RefreshPortButton.setVisible(True)
-        self.ServerAddressTextBox.setVisible(False)
-        self.ConnectUDPPortButton.setVisible(False)
-        self.SerialPortOptionButton.toggled.connect(self.SerialPortOptionButtonToggled)
-        self.UDPPortOptionButton.toggled.connect(self.UDPPortOptionButtonToggled)
-        self.ConnectUDPPortButton.clicked.connect(self.ConnectUDPPortButtonClicked)
-        self.ServerAddressTextBox.textChanged.connect(self.ServerAddressChanged)
         self.SetPoint = 0
         self.Kp = 0
         self.Ki = 0
         self.Kd = 0
         self.timer = pg.QtCore.QTimer(self)
         self.dict_sent = {}
-        self.SerialPortMode = True
-        self.UDPPortMode = False
-        self.SerialPort = 'dev/ttyUSB0'
-        self.UDPAddress = '127.0.0.1:990'
         self.tcp_handle = tcp_handle
         self.udp_handle = udp_handle
+        self.start_button_status = False
+        self.stop_button_status = True
 
         # Initialize
         self.xAxis = list(range(100))
@@ -79,6 +58,16 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.BottomCenter = self.PlotWidgetBottomCenter.plot(self.xAxis, self.iTerm, pen=penBottomCentre)
         self.BottomRight = self.PlotWidgetBottomRight.plot(self.xAxis, self.dTerm, pen=penBottomRight)
 
+    def closeEvent(self, event):
+        print("close event")
+        reply = QtGui.QMessageBox.question(self, 'Message',
+            "Are you sure to quit?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+
+        if reply == QtGui.QMessageBox.Yes:
+            event.accept() 
+        else:
+            event.ignore()
+    
     def write_config(self):
         self.dict_sent.update({'Kp' : self.Kp})
         self.dict_sent.update({'Ki' : self.Ki})
@@ -90,13 +79,13 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         json.dump(self.dict_sent, fwrite)
         self.tcp_handle.message_pipe.put(json.dumps(self.dict_sent))
 
-    def read_pid(self):
-        print(self.udp_handle.print_message_pipe())
-
     def update_plot(self):
-        # self.read_pid()
         data = self.udp_handle.message_pipe.get()
 
+        self.KpLabel.setText(self.KpLabel.text()[0:8] + str(data['P']))
+        self.KiLabel.setText(self.KiLabel.text()[0:8] + str(data['I']))
+        self.KdLabel.setText(self.KdLabel.text()[0:8] + str(data['D']))
+        
         # Removing the first entry
         self.xAxis = self.xAxis[1:]
         self.pTerm = self.pTerm[1:]
@@ -110,10 +99,9 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.pTerm.append(data['P'])
         self.iTerm.append(data['I'])
         self.dTerm.append(data['D'])
-        self.currentTerm.append(data['Current'])
-        self.errorTerm.append(data['Error'])
+        self.currentTerm.append(data['current'])
+        self.errorTerm.append(data['error'])
 
-        # time.sleep(0.05)
 
         # Updating the Plot
         self.UpLeft.setData(self.xAxis, self.currentTerm)
@@ -123,39 +111,38 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
         self.BottomRight.setData(self.xAxis, self.dTerm)
 
     def StartButtonClick(self):
-        print("start button clicked")
-        self.timer.setInterval(50)
-        self.timer.timeout.connect(self.update_plot)
-        self.timer.start(0)
+        if self.start_button_status == False and self.stop_button_status == True:
+            print("start button clicked")
+            self.start_button_status = True
+            self.stop_button_status = False
+            self.timer.setInterval(50)
+            self.timer.timeout.connect(self.update_plot)
+            self.timer.start(0)
+        else:
+            print("already running")
 
     def StopButtonClick(self):
-        self.timer.stop()
-        print("stop button clicked")
+        if self.start_button_status == True and self.stop_button_status == False:
+            print("stop button clicked")
+            self.start_button_status = False
+            self.stop_button_status = True
+            self.timer.stop()
+        else:
+            print("already stopped")
 
-    def RefreshPortList(self):
-        self.PortDropDownList.clear()
-        self.PortDropDownList.addItems(SerialPorts())
-
-    def PortDropDownListOption(self, text):
-        self.SerialPort = text
-        print("option selected: {}".format(text))
-    
     def SetPointSendButtonClick(self):
         self.write_config()
         print("set point: {}".format(self.SetPoint))
 
     def KpSendButtonClick(self):
-        self.KpLabel.setText(self.KpLabel.text()[0:8] + str(self.Kp))
         self.write_config()
         print("kp: {}".format(self.Kp))
 
-    def KiSendButtonClick(self):
-        self.KiLabel.setText(self.KiLabel.text()[0:8] + str(self.Ki))
+    def KiSendButtonClick(self):       
         self.write_config()
         print("ki: {}".format(self.Ki))
     
     def KdSendButtonClick(self):
-        self.KdLabel.setText(self.KdLabel.text()[0:8] + str(self.Kd))
         self.write_config()
         print("kd: {}".format(self.Kd))
 
@@ -171,40 +158,17 @@ class PIDApp(QtWidgets.QMainWindow, layout.Ui_MainWindow):
     def KdChanged(self):
         self.Kd = self.KdSpinBox.value()
 
-    def SerialPortOptionButtonToggled(self):
-        self.SerialPortMode = True
-        self.UDPPortMode = False
-        self.UDPPortOptionButton.setChecked(False)
-
-        self.PortDropDownList.setVisible(True)
-        self.RefreshPortButton.setVisible(True)
-        self.ServerAddressTextBox.setVisible(False)
-        self.ConnectUDPPortButton.setVisible(False)
-    
-    def UDPPortOptionButtonToggled(self):
-        self.SerialPortMode = False
-        self.UDPPortMode = True
-        self.SerialPortOptionButton.setChecked(False)
-
-        self.PortDropDownList.setVisible(False)
-        self.RefreshPortButton.setVisible(False)
-        self.ServerAddressTextBox.setVisible(True)
-        self.ConnectUDPPortButton.setVisible(True)
-
-    def ServerAddressChanged(self, text):
-        self.UDPAddress = text
-
-    def ConnectUDPPortButtonClicked(self):
-        print("connect clicked ip addr: {}".format(self.UDPAddress))
 # https://www.youtube.com/watch?v=Y-8N1dPFsVE to dynamically resize
 
 def main():
     app = QApplication(sys.argv)
 
-    tcp_handle = tcp_client(2121)
+    tcp_handle = tcp_server(2121)
+    tcp_handle.run()
 
     udp_handle = udp_server(1212)
-    udp_handle.run(True)
+    udp_handle.run()
+
     form = PIDApp(udp_handle=udp_handle, tcp_handle=tcp_handle)
     form.show()
     app.exec_()
