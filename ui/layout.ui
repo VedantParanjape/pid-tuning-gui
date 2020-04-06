@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Vedant Paranjape</author>
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
@@ -195,28 +196,11 @@
      </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="RefreshPortButton">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>20</y>
-      <width>41</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>R</string>
-    </property>
-    <property name="icon">
-     <iconset theme="refresh">
-      <normaloff>../../../.designer/backup</normaloff>../../../.designer/backup</iconset>
-    </property>
-   </widget>
    <widget class="QLabel" name="GraphicViewUpLeftLabel">
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>90</y>
+      <y>10</y>
       <width>101</width>
       <height>19</height>
      </rect>
@@ -644,7 +628,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>380</y>
+      <y>340</y>
       <width>101</width>
       <height>19</height>
      </rect>
@@ -657,7 +641,7 @@
     <property name="geometry">
      <rect>
       <x>650</x>
-      <y>380</y>
+      <y>340</y>
       <width>91</width>
       <height>19</height>
      </rect>
@@ -670,7 +654,7 @@
     <property name="geometry">
      <rect>
       <x>890</x>
-      <y>90</y>
+      <y>10</y>
       <width>81</width>
       <height>19</height>
      </rect>
@@ -683,7 +667,7 @@
     <property name="geometry">
      <rect>
       <x>940</x>
-      <y>380</y>
+      <y>340</y>
       <width>101</width>
       <height>19</height>
      </rect>
@@ -696,9 +680,9 @@
     <property name="geometry">
      <rect>
       <x>229</x>
-      <y>80</y>
+      <y>10</y>
       <width>451</width>
-      <height>281</height>
+      <height>321</height>
      </rect>
     </property>
    </widget>
@@ -706,9 +690,9 @@
     <property name="geometry">
      <rect>
       <x>690</x>
-      <y>80</y>
+      <y>10</y>
       <width>451</width>
-      <height>281</height>
+      <height>321</height>
      </rect>
     </property>
    </widget>
@@ -716,9 +700,9 @@
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>380</y>
+      <y>340</y>
       <width>291</width>
-      <height>241</height>
+      <height>281</height>
      </rect>
     </property>
    </widget>
@@ -726,9 +710,9 @@
     <property name="geometry">
      <rect>
       <x>530</x>
-      <y>380</y>
+      <y>340</y>
       <width>301</width>
-      <height>241</height>
+      <height>281</height>
      </rect>
     </property>
    </widget>
@@ -736,82 +720,10 @@
     <property name="geometry">
      <rect>
       <x>840</x>
-      <y>380</y>
+      <y>340</y>
       <width>301</width>
-      <height>241</height>
+      <height>281</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="PortDropDownList">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>20</y>
-      <width>211</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="SerialPortOptionButton">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>10</y>
-      <width>111</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Serial Port</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="UDPPortOptionButton">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>40</y>
-      <width>124</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>UDP Port</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="ConnectUDPPortButton">
-    <property name="geometry">
-     <rect>
-      <x>600</x>
-      <y>20</y>
-      <width>41</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>C</string>
-    </property>
-    <property name="icon">
-     <iconset theme="refresh">
-      <normaloff>../../../.designer/backup</normaloff>../../../.designer/backup</iconset>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="ServerAddressTextBox">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>20</y>
-      <width>211</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="inputMethodHints">
-     <set>Qt::ImhDigitsOnly|Qt::ImhUrlCharactersOnly</set>
-    </property>
-    <property name="inputMask">
-     <string/>
-    </property>
-    <property name="text">
-     <string/>
     </property>
    </widget>
    <zorder>PlotWidgetBottomRight</zorder>
@@ -826,17 +738,11 @@
    <zorder>KiBox</zorder>
    <zorder>KdBox</zorder>
    <zorder>PIDParametersBox</zorder>
-   <zorder>RefreshPortButton</zorder>
    <zorder>GraphicViewUpLeftLabel</zorder>
    <zorder>GraphicViewBottomLeftLabel</zorder>
    <zorder>GraphicViewBottomCenterLabel</zorder>
    <zorder>GraphicViewUpRightLabel</zorder>
    <zorder>GraphicViewBottomRightLabel</zorder>
-   <zorder>PortDropDownList</zorder>
-   <zorder>SerialPortOptionButton</zorder>
-   <zorder>UDPPortOptionButton</zorder>
-   <zorder>ConnectUDPPortButton</zorder>
-   <zorder>ServerAddressTextBox</zorder>
   </widget>
  </widget>
  <customwidgets>

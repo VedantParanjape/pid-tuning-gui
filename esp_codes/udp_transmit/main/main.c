@@ -11,7 +11,7 @@
 #include "nvs_flash.h"
 #include "esp_netif.h"
 #include "pid_plotter.h"
-
+#include <math.h>
 // void app_main(void)
 // {
 //     char *str = create_pid_data_to_json(10,10,23,10,10);
@@ -35,13 +35,20 @@ void broad()
     dt.P = 3.00;
     dt.I = 4.00;
     dt.D = 5.00;
-    
+
+    int count = 0;
     while(1)
     {
         esp_err_t err = send_to_queue(dt);
         err = send_to_queue(dt);
         logD("main", "%f", pid_const_read().setpoint);
-        vTaskDelay(1);
+        dt.current = tan((double)count/0.0001);
+	dt.error = sin((double)count/0.0001);
+	dt.P = cos((double)count/0.0001);
+	dt.I = atan((double)count/0.0001);
+	dt.D = sin((double)count/0.0001);
+        count++;
+	vTaskDelay(10);
     }
 }
 

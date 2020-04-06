@@ -12,6 +12,8 @@ class udp_server():
         self.port = port
         self.family_addr = socket.AF_INET
         
+        self.control_var = True
+
         try: 
             self.sock = socket.socket(self.family_addr, socket.SOCK_DGRAM)
             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -35,7 +37,6 @@ class udp_server():
 
         try: 
             data, addr = self.sock.recvfrom(int(size))
-            
             if not data:
                 return_dict["addr"] = addr
             else:
@@ -57,18 +58,20 @@ class udp_server():
         return None
 
     def shutdown(self):
+        print("tcp socket server shutdown")
         self.sock.close()
 
-    def handler(self, control_var=True):
-        while control_var:
-            data = self.recv_data(150)
-
+    def handler(self):
+        while self.control_var:
+            data = self.recv_data(200)
+        
             if data["error"] is None and data["data"] is not None:
                 self.message_pipe.put(json.loads(data["data"]))
-                
+        
+        self.shutdown()
         self.proc.join()
 
 
-    def run(self, control_var):
-        self.proc = Process(target=self.handler, kwargs={'control_var':control_var})
+    def run(self):
+        self.proc = Process(target=self.handler)
         self.proc.start()

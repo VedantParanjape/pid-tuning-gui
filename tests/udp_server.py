@@ -27,14 +27,14 @@ else:
 
 
 try:
-    sock = socket.socket(family_addr, socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_sock = socket.socket(family_addr, socket.SOCK_DGRAM)
+    server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 except socket.error as msg:
     print('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
     sys.exit()
 
 try:
-    sock.bind(('', PORT))
+    server_sock.bind(('', PORT))
 except socket.error as msg:
     print('Bind failed. Error: ' + str(msg[0]) + ': ' + msg[1])
     sys.exit()
@@ -46,7 +46,7 @@ while True:
     try:
         i = i + 1
         print(i)
-        data, addr = sock.recvfrom(150)
+        data, addr = server_sock.recvfrom(150)
         if i == 1:
             st_time = datetime.datetime.now()
         if i==100:
@@ -61,4 +61,4 @@ while True:
     except socket.error as msg:
         print('Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
 
-sock.close()
+server_sock.close()
