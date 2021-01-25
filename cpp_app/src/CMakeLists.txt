@@ -19,10 +19,10 @@ target_include_directories(${LIBRARY_NAME}
 )
 set(BOOST_ROOT /opt/boost)
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED thread)
 target_compile_features(${LIBRARY_NAME} PRIVATE cxx_std_17)
 
-target_link_libraries(${LIBRARY_NAME} pthread ${Boost_ASIO} ${Boost_SHARED_PTR} ${Boost_SYSTEM_LIBRARY})
+target_link_libraries(${LIBRARY_NAME} pthread ${Boost_ASIO} Boost::thread ${Boost_SHARED_PTR} ${Boost_SYSTEM_LIBRARY})
 
 #target_link_libraries(${LIBRARY_NAME}
 #    PUBLIC
