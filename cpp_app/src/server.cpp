@@ -1,47 +1,51 @@
 #include "libserver/server.hpp"
 
-typedef boost::shared_ptr<libserver::server> server_ptr;
-
-/**/
-boost::asio::io_service io_service;
-
-
-/**/
+boost::asio::io_context io_service;
 
 libserver::server::server():tcp_socket(io_service),udp_socket(io_service)
 {
-    /**/
+    boost::asio::ip::tcp::acceptor a(io_service,boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),2121));
+    a.accept(tcp_socket);
+    boost::asio::ip::udp::endpoint local_endpoint = boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(),1212);
+    std::cout << "Local bind " << local_endpoint << std::endl;
+    udp_socket.open(boost::asio::ip::udp::v4());
+    udp_socket.bind(local_endpoint);
 }
 
-void libserver::server::display()
+void libserver::server::read()
 {
-    std::cout<<_incomming_data<<std::endl;
+    _num_bytes_read = udp_socket.receive(boost::asio::buffer(_incomming_data));
+    // std::cout<<_incomming_data<<" Read "<<_num_bytes_read<<std::endl;
 }
 
-boost::asio::ip::tcp::socket& libserver::server::_get_tcp_socket()
+void libserver::server::handler()
 {
-    return tcp_socket;
+    if(_num_bytes_read>100)
+    {
+        std::string s(_incomming_data,_num_bytes_read);
+        std::stringstream ss(s);
+        boost::property_tree::read_json(ss,json_tree);
+        std::cout<<json_tree.get<std::string>("current")<<std::endl;
+    }
 }
 
-boost::asio::ip::udp::socket& libserver::server::_get_udp_socket()
+void libserver::acceptor()
 {
-    return udp_socket;
-}
-
-void libserver::server::tcp_read()
-{
-    tcp_socket.read_some(boost::asio::buffer(_incomming_data));
-}
-
-void libserver::handler()
-{
-    boost::asio::ip::tcp::acceptor a(io_service,boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),1212));
-    server_ptr ptr(new libserver::server);
+    libserver::server s;
     while (true)
     {
-        a.accept(ptr->_get_tcp_socket());
-        ptr->tcp_read();
-        ptr->display();
-        ptr.reset();
+        s.read();
+        s.handler();
     }
+    
+}
+
+void libserver::main_handler()
+{
+    while (true)
+    {
+        // std::cout<<"..."<<std::endl;
+        boost::this_thread::sleep( boost::posix_time::millisec(1000));
+    }
+    
 }
