@@ -4,6 +4,8 @@ project("PID-Tuning" CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake.modules/")
 
+# Debug mode
+set(CMAKE_BUILD_TYPE Debug)
 # include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 # conan_basic_setup()
 
