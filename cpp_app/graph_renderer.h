@@ -8,11 +8,11 @@
 #include "pid_message_config.h"
 #include <QApplication>
 
-#define _MAX_PTS_KI_ 50
-#define _MAX_PTS_KP_ 50
-#define _MAX_PTS_KD_ 50
-#define _MAX_PTS_ERROR_ 100
-#define _MAX_PTS_CURR_ 100
+#define _MAX_PTS_KI_ 500
+#define _MAX_PTS_KP_ 500
+#define _MAX_PTS_KD_ 500
+#define _MAX_PTS_ERROR_ 500
+#define _MAX_PTS_CURR_ 500
 #define _MAX_PTS_TIME_ 500
 #define _MAX_KI_ 2
 #define _MAX_KP_ 2
