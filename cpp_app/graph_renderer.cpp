@@ -3,7 +3,7 @@
 static QTime t(QTime::currentTime());
 
 static int curr_idx=0;
-
+static double tme= 0.0;
 
 QVector<double> kp_vec;
 QVector<double> ki_vec;
@@ -83,7 +83,7 @@ graph_renderer::graph_renderer(Ui_MainWindow *cpy_w , datahandler *d)
 
 void graph_renderer::on_data_changed(pid_terms_incomming_values val)
 {
-    static double tme = t.elapsed()/1000.00 ;
+    tme = t.elapsed()/1000.00 ;
     vals.Kd = val.Kd;
     vals.Ki = val.Ki;
     vals.Kp = val.Kp;
@@ -98,7 +98,6 @@ void graph_renderer::on_data_changed(pid_terms_incomming_values val)
     curr_vec.push_back(vals.current);
     time_vec.push_back(tme);
     handle_graph();
-    tme = t.elapsed()/1000.0;
 }
 
 void graph_renderer::handle_graph()
