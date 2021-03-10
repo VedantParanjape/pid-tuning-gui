@@ -48,6 +48,7 @@ private:
     boost::asio::ip::udp::socket *udp_socket;
     pid_terms_incomming_values vals;
     boost::asio::ip::tcp::acceptor *a;
+    boost::thread *th;
 };
 
 #endif // DATA_HANDLER_H

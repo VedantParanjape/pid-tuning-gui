@@ -86,7 +86,7 @@ void datahandler::start_slt(bool _start)
         a =new boost::asio::ip::tcp::acceptor(io_service,boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),2121));
         a->accept(*tcp_socket);
         init_server();
-        boost::thread th([this]{this->spin();});
+        th =new boost::thread([this]{this->spin();});
     }
 }
 
@@ -100,9 +100,11 @@ void datahandler::close_slt(bool _close)
         tcp_socket->shutdown(tcp_socket->shutdown_both);
         tcp_socket->close();
         udp_socket->close();
+        th->interrupt();
         delete a;
         delete tcp_socket;
         delete udp_socket;
+        delete th;
     }
 }
 
