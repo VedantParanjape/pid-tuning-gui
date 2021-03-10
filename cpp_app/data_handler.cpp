@@ -1,6 +1,6 @@
 #include "data_handler.h"
 
-boost::asio::io_context io_service;
+boost::asio::io_service io_service;
 
 datahandler::datahandler(Ui_MainWindow *cpy_w )
 {
