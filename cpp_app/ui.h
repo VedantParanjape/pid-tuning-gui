@@ -40,6 +40,7 @@ class Ui_MainWindow:public QObject
 Q_OBJECT
 public:
     QWidget *centralwidget;
+    QGridLayout *main_layout;
     QPushButton *StartButton;
     QPushButton *StopButton;
     QGroupBox *SetPointBox;
@@ -59,6 +60,7 @@ public:
     QDoubleSpinBox *KdSpinBox;
     QPushButton *KdSendButton;
     QGroupBox *PIDParametersBox;
+    QGridLayout *gridLayout_5;
     QLabel *KdLabel;
     QLabel *KiLabel;
     QLabel *KpLabel;
@@ -67,6 +69,7 @@ public:
     QLabel *GraphicViewBottomCenterLabel;
     QLabel *GraphicViewUpRightLabel;
     QLabel *GraphicViewBottomRightLabel;
+    QLabel *logo;
     QCustomPlot *PlotWidgetUpLeft;
     QCustomPlot *PlotWidgetUpRight;
     QCustomPlot *PlotWidgetBottomLeft;

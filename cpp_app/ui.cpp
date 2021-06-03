@@ -12,9 +12,15 @@ void Ui_MainWindow::setupUi()
     if (MainWindow->objectName().isEmpty())
         MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
     MainWindow->resize(1155, 652);
+    MainWindow->setAutoFillBackground(false);
+    MainWindow->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
     MainWindow->setUnifiedTitleAndToolBarOnMac(false);
     centralwidget = new QWidget(MainWindow);
     centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
+
+    logo = new QLabel(centralwidget);
+    logo->setObjectName(QString::fromUtf8("label"));
+
     StartButton = new QPushButton(centralwidget);
     StartButton->setObjectName(QString::fromUtf8("StartButton"));
     StartButton->setGeometry(QRect(10, 10, 100, 31));
@@ -53,7 +59,7 @@ void Ui_MainWindow::setupUi()
 
     KiBox = new QGroupBox(centralwidget);
     KiBox->setObjectName(QString::fromUtf8("KiBox"));
-    KiBox->setGeometry(QRect(10, 280, 189, 74));
+    KiBox->setGeometry(QRect(10, 180, 189, 74));
     gridLayout_3 = new QGridLayout(KiBox);
     gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
     KiSpinBox = new QDoubleSpinBox(KiBox);
@@ -93,9 +99,19 @@ void Ui_MainWindow::setupUi()
     KpLabel = new QLabel(PIDParametersBox);
     KpLabel->setObjectName(QString::fromUtf8("KpLabel"));
     KpLabel->setGeometry(QRect(10, 30, 171, 21));
-    GraphicViewUpLeftLabel = new QLabel(centralwidget);
-    GraphicViewUpLeftLabel->setObjectName(QString::fromUtf8("GraphicViewUpLeftLabel"));
-    GraphicViewUpLeftLabel->setGeometry(QRect(420, 10, 101, 19));
+
+    gridLayout_5 = new QGridLayout(PIDParametersBox);
+    gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_6"));
+
+    gridLayout_5->addWidget(KpLabel, 0, 0, 1, 1);
+
+
+    gridLayout_5->addWidget(KiLabel, 1, 0, 1, 1);
+
+
+    gridLayout_5->addWidget(KdLabel, 2, 0, 1, 1);
+
+
     QPalette palette;
     QBrush brush(QColor(0, 0, 0, 255));
     brush.setStyle(Qt::SolidPattern);
@@ -152,46 +168,102 @@ void Ui_MainWindow::setupUi()
     palette.setBrush(QPalette::Disabled, QPalette::AlternateBase, brush1);
     palette.setBrush(QPalette::Disabled, QPalette::ToolTipBase, brush4);
     palette.setBrush(QPalette::Disabled, QPalette::ToolTipText, brush);
-    GraphicViewUpLeftLabel->setPalette(palette);
-    GraphicViewBottomLeftLabel = new QLabel(centralwidget);
-    GraphicViewBottomLeftLabel->setObjectName(QString::fromUtf8("GraphicViewBottomLeftLabel"));
-    GraphicViewBottomLeftLabel->setGeometry(QRect(320, 340, 101, 19));
-    GraphicViewBottomCenterLabel = new QLabel(centralwidget);
-    GraphicViewBottomCenterLabel->setObjectName(QString::fromUtf8("GraphicViewBottomCenterLabel"));
-    GraphicViewBottomCenterLabel->setGeometry(QRect(650, 340, 91, 19));
-    GraphicViewUpRightLabel = new QLabel(centralwidget);
-    GraphicViewUpRightLabel->setObjectName(QString::fromUtf8("GraphicViewUpRightLabel"));
-    GraphicViewUpRightLabel->setGeometry(QRect(890, 10, 81, 19));
-    GraphicViewBottomRightLabel = new QLabel(centralwidget);
-    GraphicViewBottomRightLabel->setObjectName(QString::fromUtf8("GraphicViewBottomRightLabel"));
-    GraphicViewBottomRightLabel->setGeometry(QRect(940, 340, 101, 19));
+
+
+
+
+
     PlotWidgetUpLeft = new QCustomPlot(centralwidget);
     PlotWidgetUpLeft->setObjectName(QString::fromUtf8("PlotWidgetUpLeft"));
     PlotWidgetUpLeft->setGeometry(QRect(229, 10, 451, 321));
     PlotWidgetUpLeft->setBackground(QBrush(QColor("#1a2228")));
-//    PlotWidgetUpLeft->paintEngine()QBrush(QColor("#000000")));
+    GraphicViewUpLeftLabel = new QLabel(PlotWidgetUpLeft);
+    GraphicViewUpLeftLabel ->setObjectName(QString::fromUtf8("GraphicViewBottomLeftLabel"));
+    GraphicViewUpLeftLabel->setGeometry(QRect(130, 0, 101, 19));
+    GraphicViewUpLeftLabel->setStyleSheet(QString::fromUtf8("color: rgb(252, 233, 79);background-color: #1a2228;"));
+
+    //    PlotWidgetUpLeft->paintEngine()QBrush(QColor("#000000")));
+
     PlotWidgetUpRight = new QCustomPlot(centralwidget);
     PlotWidgetUpRight->setObjectName(QString::fromUtf8("PlotWidgetUpRight"));
     PlotWidgetUpRight->setGeometry(QRect(690, 10, 451, 321));
     PlotWidgetUpRight->setBackground(QBrush(QColor("#1a2228")));
+    GraphicViewUpRightLabel = new QLabel(PlotWidgetUpRight);
+    GraphicViewUpRightLabel->setObjectName(QString::fromUtf8("GraphicViewUpRightLabel"));
+    GraphicViewUpRightLabel->setGeometry(QRect(150, 0, 81, 19));
+    GraphicViewUpRightLabel->setStyleSheet(QString::fromUtf8("color: rgb(252, 233, 79);background-color: #1a2228;"));
+
     PlotWidgetBottomLeft = new QCustomPlot(centralwidget);
     PlotWidgetBottomLeft->setObjectName(QString::fromUtf8("PlotWidgetBottomLeft"));
     PlotWidgetBottomLeft->setGeometry(QRect(230, 340, 291, 281));
     PlotWidgetBottomLeft->setBackground(QBrush(QColor("#1a2228")));
+    GraphicViewBottomLeftLabel = new QLabel(PlotWidgetBottomLeft);
+    GraphicViewBottomLeftLabel->setObjectName(QString::fromUtf8("GraphicViewBottomLeftLabel"));
+    GraphicViewBottomLeftLabel->setGeometry(QRect(30, 0, 95, 21));
+    GraphicViewBottomLeftLabel->setStyleSheet(QString::fromUtf8("color: rgb(252, 233, 79);background-color: #1a2228;"));
+
     PlotWidgetBottomCenter = new QCustomPlot(centralwidget);
     PlotWidgetBottomCenter->setObjectName(QString::fromUtf8("PlotWidgetBottomCenter"));
     PlotWidgetBottomCenter->setGeometry(QRect(530, 340, 301, 281));
     PlotWidgetBottomCenter->setBackground(QBrush(QColor("#1a2228")));
+    GraphicViewBottomCenterLabel = new QLabel(PlotWidgetBottomCenter);
+    GraphicViewBottomCenterLabel->setObjectName(QString::fromUtf8("GraphicViewBottomCenterLabel"));
+    GraphicViewBottomCenterLabel->setGeometry(QRect(150, 0, 91, 19));
+    GraphicViewBottomCenterLabel->setStyleSheet(QString::fromUtf8("color: rgb(252, 233, 79);background-color: #1a2228;"));
+
     PlotWidgetBottomRight = new QCustomPlot(centralwidget);
     PlotWidgetBottomRight->setObjectName(QString::fromUtf8("PlotWidgetBottomRight"));
     PlotWidgetBottomRight->setGeometry(QRect(840, 340, 301, 281));
     PlotWidgetBottomRight->setBackground(QBrush(QColor("#1a2228")));
+    GraphicViewBottomRightLabel = new QLabel(PlotWidgetBottomRight);
+    GraphicViewBottomRightLabel->setObjectName(QString::fromUtf8("GraphicViewBottomRightLabel"));
+    GraphicViewBottomRightLabel->setGeometry(QRect(60, 0, 101, 19));
+    GraphicViewBottomRightLabel->setStyleSheet(QString::fromUtf8("color: rgb(252, 233, 79);background-color: #1a2228;"));
+
+    main_layout = new QGridLayout(centralwidget);
+    main_layout->setObjectName(QString::fromUtf8("main_layout"));
+
+    main_layout->addWidget(logo, 0, 0, 1, 2, Qt::AlignHCenter);
+    main_layout->addWidget(StartButton, 1, 0, 1, 1);
+
+    main_layout->addWidget(StopButton, 1, 1, 1, 1);
+
+    main_layout->addWidget(PlotWidgetUpLeft, 0, 2, 4, 2);
+
+
+    main_layout->addWidget(PlotWidgetUpRight, 0, 4, 4, 2);
+
+
+    main_layout->addWidget(SetPointBox, 2, 0, 1, 2);
+
+
+    main_layout->addWidget(KpBox, 3, 0, 1, 2);
+
+
+
+    main_layout->addWidget(KiBox, 4, 0, 1, 2);
+
+
+    main_layout->addWidget(PlotWidgetBottomLeft, 4, 2, 3, 1);
+
+
+    main_layout->addWidget(PlotWidgetBottomCenter, 4, 3, 3, 2);
+
+
+    main_layout->addWidget(PlotWidgetBottomRight, 4, 5, 3, 1);
+
+
+    main_layout->addWidget(KdBox, 5, 0, 1, 2);
+
+    main_layout->addWidget(PIDParametersBox, 6, 0, 1, 2);
+
     MainWindow->setCentralWidget(centralwidget);
     PlotWidgetBottomRight->raise();
     PlotWidgetBottomCenter->raise();
     PlotWidgetBottomLeft->raise();
     PlotWidgetUpRight->raise();
     PlotWidgetUpLeft->raise();
+    logo->raise();
     StartButton->raise();
     StopButton->raise();
     SetPointBox->raise();
@@ -235,6 +307,7 @@ void Ui_MainWindow::setupUi()
 void Ui_MainWindow::retranslateUi(QMainWindow *MainWindow)
 {
     MainWindow->setWindowTitle(QApplication::translate("MainWindow", "PID Tuner", nullptr));
+    logo->setText(QApplication::translate("MainWindow", "<html><head/><body><p><img src=\":/SRA LOGO/sra.png\"/></p></body></html>", nullptr));
     StartButton->setText(QApplication::translate("MainWindow", "Start", nullptr));
     StopButton->setText(QApplication::translate("MainWindow", "Stop", nullptr));
     SetPointBox->setTitle(QApplication::translate("MainWindow", "Setpoint Control", nullptr));
@@ -249,11 +322,11 @@ void Ui_MainWindow::retranslateUi(QMainWindow *MainWindow)
     KdLabel->setText(QApplication::translate("MainWindow", "D Term: 10", nullptr));
     KiLabel->setText(QApplication::translate("MainWindow", "I Term: 10", nullptr));
     KpLabel->setText(QApplication::translate("MainWindow", "P Term: 10", nullptr));
-    GraphicViewUpLeftLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Current Plot</span></p></body></html>", nullptr));
-    GraphicViewBottomLeftLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">P Term Plot</span></p></body></html>", nullptr));
-    GraphicViewBottomCenterLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">I Term Plot</span></p></body></html>", nullptr));
-    GraphicViewUpRightLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Error Plot</span></p></body></html>", nullptr));
-    GraphicViewBottomRightLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">D Term Plot</span></p></body></html>", nullptr));
+    GraphicViewUpLeftLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" ;\">Current Plot</span></p></body></html>", nullptr));
+    GraphicViewBottomLeftLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" ;\">P Term Plot</span></p></body></html>", nullptr));
+    GraphicViewBottomCenterLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" ;\">I Term Plot</span></p></body></html>", nullptr));
+    GraphicViewUpRightLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" ;\">Error Plot</span></p></body></html>", nullptr));
+    GraphicViewBottomRightLabel->setText(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\";\">D Term Plot</span></p></body></html>", nullptr));
 } // retranslateUi
 
 void Ui_MainWindow::on_send_kd()

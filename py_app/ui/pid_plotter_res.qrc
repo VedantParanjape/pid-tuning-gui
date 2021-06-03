@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="SRA LOGO">
+    <file>sra.png</file>
+  </qresource>
+</RCC>
