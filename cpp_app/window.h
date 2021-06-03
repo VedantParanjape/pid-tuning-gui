@@ -1,11 +1,11 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <QWidget>
-#include <QPushButton>
 #include <QApplication>
 #include <QProgressBar>
+#include <QPushButton>
 #include <QSlider>
+#include <QWidget>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 

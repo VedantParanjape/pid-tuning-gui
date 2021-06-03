@@ -1,7 +1,7 @@
 #include "window.h"
 
-Window::Window(QWidget *parent) :
-    QWidget(parent)
+Window::Window(QWidget *parent)
+    : QWidget(parent)
 {
     QMainWindow window;
     // Set size of the window
@@ -11,8 +11,8 @@ Window::Window(QWidget *parent) :
     m_button->setGeometry(200, 10, 280, 30);
     m_button->setCheckable(true);
     // NEW : Do the connection
-    connect(m_button, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool)));
-    connect(this, SIGNAL (counterReached()), QApplication::instance(), SLOT (quit()));
+    connect(m_button, SIGNAL(clicked(bool)), this, SLOT(slotButtonClicked(bool)));
+    connect(this, SIGNAL(counterReached()), QApplication::instance(), SLOT(quit()));
     m_counter = 0;
     // Create a horizontal slider
     // with the range between 0 and 100, and a starting value of 0
@@ -30,22 +30,18 @@ Window::Window(QWidget *parent) :
     // Connection
     // This connection set the value of the progress bar
     // while the slider's value changes
-    QObject::connect(slider, SIGNAL (valueChanged(int)), progressBar, SLOT (setValue(int)));
-
+    QObject::connect(slider, SIGNAL(valueChanged(int)), progressBar, SLOT(setValue(int)));
 }
 
-void Window::slotButtonClicked(bool checked) {
-
-    if (checked)
-    {
+void Window::slotButtonClicked(bool checked)
+{
+    if (checked) {
         m_button->setText("Checked");
-    }
-    else
-    {
+    } else {
         m_button->setText("Hello World");
     }
     m_counter++;
     if (m_counter == 10) {
-    emit counterReached();
+        emit counterReached();
     }
 }

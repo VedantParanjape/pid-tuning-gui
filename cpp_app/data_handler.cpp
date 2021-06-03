@@ -2,22 +2,26 @@
 
 boost::asio::io_service io_service;
 
-datahandler::datahandler(Ui_MainWindow *cpy_w )
+datahandler::datahandler(Ui_MainWindow *cpy_w)
 {
-    std::cout<<"Started data_handler "<<QThread::currentThread()<<std::endl;
+    std::cout << "Started data_handler " << QThread::currentThread() << std::endl;
     close = false;
     start = false;
-    connect(cpy_w,SIGNAL(send_vals(pid_term_send_values)),this,SLOT(send_data(pid_term_send_values)),Qt::QueuedConnection);
-    connect(cpy_w,SIGNAL(start_sig(bool)),this,SLOT(start_slt(bool)),Qt::QueuedConnection);
-    connect(cpy_w,SIGNAL(stop_sig(bool)),this,SLOT(close_slt(bool)),Qt::QueuedConnection);
+    connect(cpy_w,
+            SIGNAL(send_vals(pid_term_send_values)),
+            this,
+            SLOT(send_data(pid_term_send_values)),
+            Qt::QueuedConnection);
+    connect(cpy_w, SIGNAL(start_sig(bool)), this, SLOT(start_slt(bool)), Qt::QueuedConnection);
+    connect(cpy_w, SIGNAL(stop_sig(bool)), this, SLOT(close_slt(bool)), Qt::QueuedConnection);
 }
 
 void datahandler::init_server()
 {
-
-    std::cout<<"\n========Initiating server============"<<std::endl;
-    std::cout<<"Server thread "<<QThread::currentThread()<<std::endl;
-    boost::asio::ip::udp::endpoint local_endpoint = boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(),1212);
+    std::cout << "\n========Initiating server============" << std::endl;
+    std::cout << "Server thread " << QThread::currentThread() << std::endl;
+    boost::asio::ip::udp::endpoint local_endpoint
+        = boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 1212);
     std::cout << "Local bind " << local_endpoint << std::endl;
     udp_socket->open(boost::asio::ip::udp::v4());
     udp_socket->bind(local_endpoint);
@@ -30,12 +34,11 @@ void datahandler::receive_data()
 
 void datahandler::handle_received_data()
 {
-    if(_num_bytes_read>100)
-    {
-        std::string s(_incomming_data,_num_bytes_read);
+    if (_num_bytes_read > 100) {
+        std::string s(_incomming_data, _num_bytes_read);
         std::stringstream ss(s);
-        boost::property_tree::read_json(ss,json_tree);
-//        std::cout<<json_tree.get<std::string>("current")<<std::endl;
+        boost::property_tree::read_json(ss, json_tree);
+        //        std::cout<<json_tree.get<std::string>("current")<<std::endl;
         vals.Kd = json_tree.get<std::double_t>("D");
         vals.Kp = json_tree.get<std::double_t>("P");
         vals.Ki = json_tree.get<std::double_t>("I");
@@ -51,15 +54,14 @@ void datahandler::send_data(pid_term_send_values send_vals)
     //
     std::ostringstream oss;
     out_json_tree.clear();
-    out_json_tree.put("Kp",send_vals.Kp);
-    out_json_tree.put("Ki",send_vals.Ki);
-    out_json_tree.put("Kd",send_vals.Kd);
-    out_json_tree.put("SetPoint",send_vals.setpoint);
+    out_json_tree.put("Kp", send_vals.Kp);
+    out_json_tree.put("Ki", send_vals.Ki);
+    out_json_tree.put("Kd", send_vals.Kd);
+    out_json_tree.put("SetPoint", send_vals.setpoint);
     boost::property_tree::json_parser::write_json(oss, out_json_tree);
-//    std::cout<<"Sending : "<<oss.str()<<std::endl;
+    //    std::cout<<"Sending : "<<oss.str()<<std::endl;
     tcp_socket->write_some(boost::asio::buffer(oss.str()));
 }
-
 
 void datahandler::run_once()
 {
@@ -69,8 +71,7 @@ void datahandler::run_once()
 
 void datahandler::spin()
 {
-    while(!close)
-    {
+    while (!close) {
         run_once();
     }
 }
@@ -78,24 +79,23 @@ void datahandler::spin()
 void datahandler::start_slt(bool _start)
 {
     start = _start;
-    if(start)
-    {
-        std::cout<<"Start button ack"<<std::endl;
+    if (start) {
+        std::cout << "Start button ack" << std::endl;
         tcp_socket = new boost::asio::ip::tcp::socket(io_service);
         udp_socket = new boost::asio::ip::udp::socket(io_service);
-        a =new boost::asio::ip::tcp::acceptor(io_service,boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),2121));
+        a = new boost::asio::ip::tcp::acceptor(
+            io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 2121));
         a->accept(*tcp_socket);
         init_server();
-        th =new boost::thread([&]{spin();});
+        th = new boost::thread([&] { spin(); });
     }
 }
 
 void datahandler::close_slt(bool _close)
 {
-    std::cout<<"Close Pressed"<<std::endl;
+    std::cout << "Close Pressed" << std::endl;
     close = _close;
-    if(close)
-    {
+    if (close) {
         a->close();
         tcp_socket->shutdown(tcp_socket->shutdown_both);
         tcp_socket->close();
@@ -118,8 +118,4 @@ bool datahandler::is_close()
     return close;
 }
 
-
-datahandler::~datahandler()
-{
-
-}
+datahandler::~datahandler() {}

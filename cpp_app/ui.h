@@ -9,6 +9,11 @@
 #ifndef UI_LAYOUT_H
 #define UI_LAYOUT_H
 
+#include "pid_message_config.h"
+#include "qcustomplot.h"
+#include <boost/lexical_cast.hpp>
+#include <iostream>
+#include <QObject>
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDoubleSpinBox>
@@ -18,11 +23,6 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
-#include <QObject>
-#include "qcustomplot.h"
-#include "pid_message_config.h"
-#include <iostream>
-#include <boost/lexical_cast.hpp>
 
 #define _SETPOINT_STEP_ (0.01)
 #define _KD_STEP_ (0.01)
@@ -35,9 +35,9 @@
 
 //QT_BEGIN_NAMESPACE
 
-class Ui_MainWindow:public QObject
+class Ui_MainWindow : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     QWidget *centralwidget;
     QGridLayout *main_layout;
@@ -93,13 +93,13 @@ public slots:
     void on_send_setpoint();
     void on_start();
     void on_stop();
+
 private:
     pid_term_send_values vals;
     std::string d_term = "D Term: ";
     std::string p_term = "P Term: ";
     std::string i_term = "I Term: ";
     bool start = false;
-
 };
 //QT_END_NAMESPACE
 

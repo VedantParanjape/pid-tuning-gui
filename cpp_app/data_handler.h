@@ -1,18 +1,18 @@
 #ifndef DATA_HANDLER_H
 #define DATA_HANDLER_H
 
-#include <QObject>
-#include <QThread>
-#include <iostream>
-#include <boost/asio.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ini_parser.hpp>
-#include <boost/thread.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/bind/bind.hpp>
 #include "pid_message_config.h"
 #include "ui.h"
+#include <boost/asio.hpp>
+#include <boost/bind/bind.hpp>
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+#include <iostream>
+#include <QObject>
+#include <QThread>
 
 #ifndef _MAX_BUF_SIZE_
 #define _MAX_BUF_SIZE_ 512
@@ -32,11 +32,12 @@ public:
     bool is_start();
     bool is_close();
 signals:
-     void data_received(pid_terms_incomming_values vals);
+    void data_received(pid_terms_incomming_values vals);
 public slots:
-     void send_data(pid_term_send_values send_vals);
-     void close_slt(bool _close);
-     void start_slt(bool _start);
+    void send_data(pid_term_send_values send_vals);
+    void close_slt(bool _close);
+    void start_slt(bool _start);
+
 private:
     char _incomming_data[_MAX_BUF_SIZE_];
     unsigned int _num_bytes_read;
