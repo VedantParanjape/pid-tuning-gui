@@ -1,7 +1,6 @@
 #include "graph_renderer.h"
 #include "pid_message_config.h"
 #include "ui.h"
-#include "window.h"
 #include <iostream>
 #include <QApplication>
 #include <QProgressBar>

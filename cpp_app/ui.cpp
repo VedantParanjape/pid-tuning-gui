@@ -20,16 +20,19 @@ void Ui_MainWindow::setupUi()
 
     logo = new QLabel(centralwidget);
     logo->setObjectName(QString::fromUtf8("label"));
-
+    logo->setMaximumSize(QSize(300, 300));
     StartButton = new QPushButton(centralwidget);
     StartButton->setObjectName(QString::fromUtf8("StartButton"));
     StartButton->setGeometry(QRect(10, 10, 100, 31));
+    StartButton->setMaximumSize(QSize(150, 150));
     StopButton = new QPushButton(centralwidget);
     StopButton->setObjectName(QString::fromUtf8("StopButton"));
     StopButton->setGeometry(QRect(120, 10, 100, 31));
+    StopButton->setMaximumSize(QSize(150, 150));
     SetPointBox = new QGroupBox(centralwidget);
     SetPointBox->setObjectName(QString::fromUtf8("SetPointBox"));
     SetPointBox->setGeometry(QRect(10, 80, 189, 74));
+    SetPointBox->setMaximumSize(QSize(300, 300));
     gridLayout = new QGridLayout(SetPointBox);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
     SetPointSpinBox = new QDoubleSpinBox(SetPointBox);
@@ -45,6 +48,7 @@ void Ui_MainWindow::setupUi()
     KpBox = new QGroupBox(centralwidget);
     KpBox->setObjectName(QString::fromUtf8("KpBox"));
     KpBox->setGeometry(QRect(10, 180, 189, 74));
+    KpBox->setMaximumSize(QSize(300, 300));
     gridLayout_2 = new QGridLayout(KpBox);
     gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
     KpSendButton = new QPushButton(KpBox);
@@ -60,6 +64,7 @@ void Ui_MainWindow::setupUi()
     KiBox = new QGroupBox(centralwidget);
     KiBox->setObjectName(QString::fromUtf8("KiBox"));
     KiBox->setGeometry(QRect(10, 180, 189, 74));
+    KiBox->setMaximumSize(QSize(300, 300));
     gridLayout_3 = new QGridLayout(KiBox);
     gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
     KiSpinBox = new QDoubleSpinBox(KiBox);
@@ -75,6 +80,7 @@ void Ui_MainWindow::setupUi()
     KdBox = new QGroupBox(centralwidget);
     KdBox->setObjectName(QString::fromUtf8("KdBox"));
     KdBox->setGeometry(QRect(10, 380, 189, 74));
+    KdBox->setMaximumSize(QSize(300, 300));
     gridLayout_4 = new QGridLayout(KdBox);
     gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
     KdSpinBox = new QDoubleSpinBox(KdBox);
@@ -90,6 +96,7 @@ void Ui_MainWindow::setupUi()
     PIDParametersBox = new QGroupBox(centralwidget);
     PIDParametersBox->setObjectName(QString::fromUtf8("PIDParametersBox"));
     PIDParametersBox->setGeometry(QRect(10, 500, 191, 121));
+    PIDParametersBox->setMaximumSize(QSize(300, 300));
     KdLabel = new QLabel(PIDParametersBox);
     KdLabel->setObjectName(QString::fromUtf8("KdLabel"));
     KdLabel->setGeometry(QRect(10, 90, 171, 21));
