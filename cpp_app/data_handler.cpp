@@ -86,7 +86,7 @@ void datahandler::start_slt(bool _start)
         a =new boost::asio::ip::tcp::acceptor(io_service,boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),2121));
         a->accept(*tcp_socket);
         init_server();
-        th =new boost::thread([this]{this->spin();});
+        th =new boost::thread([&]{spin();});
     }
 }
 
