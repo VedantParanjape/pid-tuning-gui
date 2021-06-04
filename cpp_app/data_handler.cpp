@@ -5,6 +5,10 @@ boost::asio::io_service io_service;
 datahandler::datahandler(Ui_MainWindow *cpy_w)
 {
     std::cout << "Started data_handler " << QThread::currentThread() << std::endl;
+    th = nullptr;
+    a = nullptr;
+    tcp_socket = nullptr;
+    udp_socket = nullptr;
     close = false;
     start = false;
     connect(cpy_w,
@@ -79,15 +83,21 @@ void datahandler::spin()
 void datahandler::start_slt(bool _start)
 {
     start = _start;
+    close = false;
     if (start) {
         std::cout << "Start button ack" << std::endl;
-        tcp_socket = new boost::asio::ip::tcp::socket(io_service);
-        udp_socket = new boost::asio::ip::udp::socket(io_service);
-        a = new boost::asio::ip::tcp::acceptor(
-            io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 2121));
-        a->accept(*tcp_socket);
-        init_server();
-        th = new boost::thread([&] { spin(); });
+        if(tcp_socket==nullptr)
+            tcp_socket = new boost::asio::ip::tcp::socket(io_service);
+        if(udp_socket==nullptr)
+            udp_socket = new boost::asio::ip::udp::socket(io_service);
+        if(a==nullptr){
+            a = new boost::asio::ip::tcp::acceptor(
+                        io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 2121));
+            a->accept(*tcp_socket);
+            init_server();
+            if(th==nullptr)
+                th = new boost::thread([&] { spin(); });
+        }
     }
 }
 
@@ -95,16 +105,33 @@ void datahandler::close_slt(bool _close)
 {
     std::cout << "Close Pressed" << std::endl;
     close = _close;
+    start = false;
     if (close) {
-        a->close();
-        tcp_socket->shutdown(tcp_socket->shutdown_both);
-        tcp_socket->close();
-        udp_socket->close();
-        th->interrupt();
-        delete a;
-        delete tcp_socket;
-        delete udp_socket;
-        delete th;
+
+        if(a!=nullptr){
+            a->close();
+            delete a;
+            a = nullptr;
+        }
+
+        if(tcp_socket!=nullptr){
+            tcp_socket->shutdown(tcp_socket->shutdown_both);
+            tcp_socket->close();
+            delete tcp_socket;
+            tcp_socket = nullptr;
+        }
+
+        if(udp_socket!=nullptr){
+            udp_socket->close();
+            delete udp_socket;
+            udp_socket = nullptr;
+        }
+
+        if(th!=nullptr){
+            th->interrupt();
+            delete th;
+            th = nullptr;
+        }
     }
 }
 

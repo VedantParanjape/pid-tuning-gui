@@ -8,11 +8,27 @@
 #include <QSlider>
 #include <QtWidgets/QMainWindow>
 
+QByteArray readTextFile(const QString &file_path) {
+  QFile input_file(file_path);
+  QByteArray input_data;
+
+  if (input_file.open(QIODevice::Text | QIODevice::Unbuffered | QIODevice::ReadOnly)) {
+    input_data = input_file.readAll();
+    input_file.close();
+    return input_data;
+  }
+  else {
+    return QByteArray();
+  }
+}
+
 int main(int argc, char *argv[])
 {
     qRegisterMetaType<pid_terms_incomming_values>("pid_terms_incomming_values");
     qRegisterMetaType<pid_term_send_values>("pid_term_send_values");
+    QString style_sheet = readTextFile(":/stylesheets/material-blue.qss");
     QApplication a(argc, argv);
+    a.setStyleSheet(style_sheet);
     QMainWindow *m = new QMainWindow();
     Ui_MainWindow *w = new Ui_MainWindow(m);
     datahandler *d_ptr = new datahandler(w);

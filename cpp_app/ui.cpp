@@ -13,7 +13,7 @@ void Ui_MainWindow::setupUi()
         MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
     MainWindow->resize(1155, 652);
     MainWindow->setAutoFillBackground(false);
-    MainWindow->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
+    // MainWindow->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
     MainWindow->setUnifiedTitleAndToolBarOnMac(false);
     centralwidget = new QWidget(MainWindow);
     centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
@@ -24,11 +24,11 @@ void Ui_MainWindow::setupUi()
     StartButton = new QPushButton(centralwidget);
     StartButton->setObjectName(QString::fromUtf8("StartButton"));
     StartButton->setGeometry(QRect(10, 10, 100, 31));
-    StartButton->setMaximumSize(QSize(150, 150));
+    StartButton->setMaximumSize(QSize(150, 100));
     StopButton = new QPushButton(centralwidget);
     StopButton->setObjectName(QString::fromUtf8("StopButton"));
     StopButton->setGeometry(QRect(120, 10, 100, 31));
-    StopButton->setMaximumSize(QSize(150, 150));
+    StopButton->setMaximumSize(QSize(150, 100));
     SetPointBox = new QGroupBox(centralwidget);
     SetPointBox->setObjectName(QString::fromUtf8("SetPointBox"));
     SetPointBox->setGeometry(QRect(10, 80, 189, 74));
