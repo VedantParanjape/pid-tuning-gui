@@ -86,16 +86,16 @@ void datahandler::start_slt(bool _start)
     close = false;
     if (start) {
         std::cout << "Start button ack" << std::endl;
-        if(tcp_socket==nullptr)
+        if (tcp_socket == nullptr)
             tcp_socket = new boost::asio::ip::tcp::socket(io_service);
-        if(udp_socket==nullptr)
+        if (udp_socket == nullptr)
             udp_socket = new boost::asio::ip::udp::socket(io_service);
-        if(a==nullptr){
+        if (a == nullptr) {
             a = new boost::asio::ip::tcp::acceptor(
-                        io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 2121));
+                io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 2121));
             a->accept(*tcp_socket);
             init_server();
-            if(th==nullptr)
+            if (th == nullptr)
                 th = new boost::thread([&] { spin(); });
         }
     }
@@ -107,27 +107,26 @@ void datahandler::close_slt(bool _close)
     close = _close;
     start = false;
     if (close) {
-
-        if(a!=nullptr){
+        if (a != nullptr) {
             a->close();
             delete a;
             a = nullptr;
         }
 
-        if(tcp_socket!=nullptr){
+        if (tcp_socket != nullptr) {
             tcp_socket->shutdown(tcp_socket->shutdown_both);
             tcp_socket->close();
             delete tcp_socket;
             tcp_socket = nullptr;
         }
 
-        if(udp_socket!=nullptr){
+        if (udp_socket != nullptr) {
             udp_socket->close();
             delete udp_socket;
             udp_socket = nullptr;
         }
 
-        if(th!=nullptr){
+        if (th != nullptr) {
             th->interrupt();
             delete th;
             th = nullptr;
