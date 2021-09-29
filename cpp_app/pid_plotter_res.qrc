@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="SRA LOGO">
+    <file>sra.png</file>
+  </qresource>
+  <qresource prefix="/">
+    <file>stylesheets/material-blue.qss</file>
+  </qresource>
+</RCC>
